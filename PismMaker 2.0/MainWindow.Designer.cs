@@ -37,7 +37,7 @@
             labelControlPanel = new Label();
             labelAttachments = new Label();
             comboBoxChooseTeam = new ComboBox();
-            comboBox1 = new ComboBox();
+            comboBoxChooseTemplate = new ComboBox();
             checkBoxMEMO = new CheckBox();
             checkBoxIWA = new CheckBox();
             checkBoxMAIL = new CheckBox();
@@ -173,15 +173,15 @@
             comboBoxChooseTeam.Size = new Size(333, 29);
             comboBoxChooseTeam.TabIndex = 8;
             // 
-            // comboBox1
+            // comboBoxChooseTemplate
             // 
-            comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboBox1.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            comboBox1.FormattingEnabled = true;
-            comboBox1.Location = new Point(517, 61);
-            comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(333, 29);
-            comboBox1.TabIndex = 9;
+            comboBoxChooseTemplate.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBoxChooseTemplate.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            comboBoxChooseTemplate.FormattingEnabled = true;
+            comboBoxChooseTemplate.Location = new Point(517, 61);
+            comboBoxChooseTemplate.Name = "comboBoxChooseTemplate";
+            comboBoxChooseTemplate.Size = new Size(333, 29);
+            comboBoxChooseTemplate.TabIndex = 9;
             // 
             // checkBoxMEMO
             // 
@@ -423,6 +423,7 @@
             buttonChooseQuestion.TabIndex = 21;
             buttonChooseQuestion.Text = "Wybierz pytanie";
             buttonChooseQuestion.UseVisualStyleBackColor = true;
+            buttonChooseQuestion.Click += buttonChooseQuestion_Click;
             // 
             // buttonDeleteChoosedQuestion
             // 
@@ -433,6 +434,7 @@
             buttonDeleteChoosedQuestion.TabIndex = 22;
             buttonDeleteChoosedQuestion.Text = "Usuń pytanie";
             buttonDeleteChoosedQuestion.UseVisualStyleBackColor = true;
+            buttonDeleteChoosedQuestion.Click += buttonDeleteChoosedQuestion_Click;
             // 
             // buttonDeleteAllQuestions
             // 
@@ -443,6 +445,7 @@
             buttonDeleteAllQuestions.TabIndex = 23;
             buttonDeleteAllQuestions.Text = "Usuń wszystkie pytania";
             buttonDeleteAllQuestions.UseVisualStyleBackColor = true;
+            buttonDeleteAllQuestions.Click += buttonDeleteAllQuestions_Click;
             // 
             // buttonChooseAttachment
             // 
@@ -532,7 +535,7 @@
             Controls.Add(checkBoxMAIL);
             Controls.Add(checkBoxIWA);
             Controls.Add(checkBoxMEMO);
-            Controls.Add(comboBox1);
+            Controls.Add(comboBoxChooseTemplate);
             Controls.Add(comboBoxChooseTeam);
             Controls.Add(labelAttachments);
             Controls.Add(labelControlPanel);
@@ -566,7 +569,7 @@
         private Label labelControlPanel;
         private Label labelAttachments;
         private ComboBox comboBoxChooseTeam;
-        private ComboBox comboBox1;
+        private ComboBox comboBoxChooseTemplate;
         private CheckBox checkBoxMEMO;
         private CheckBox checkBoxIWA;
         private CheckBox checkBoxMAIL;

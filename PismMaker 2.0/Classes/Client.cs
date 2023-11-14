@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PismMaker_2._0.Classes
 {
-    internal class Client
+    public class Client
     {
 
         #region Properties
