@@ -45,5 +45,24 @@ namespace PismMaker_2._0
             }
         }
 
+
+        #region Methods
+
+        public void ConsoleWindowWriteLine(string text)
+        {
+            textBoxConsole.AppendText(text + Environment.NewLine);
+        }
+
+
+        #endregion
+
+
+        private void buttonPrelookMessange_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                ConsoleWindowWriteLine("Wykonanie tekstu konsoli");
+            }
+        }
     }
 }
