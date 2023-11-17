@@ -141,7 +141,7 @@ namespace PismMaker_2._0
             else if (textBoxSelectedQuestion.ReadOnly == false)
             {
 
-                ChooseClientData chooseClientData = new ChooseClientData(klientInfoDict);
+                ChooseClientData chooseClientData = new ChooseClientData(mainForm, klientInfoDict);
                 chooseClientData.DataSelected += ChooseClientData_DataSelected;
                 chooseClientData.Show();
             }

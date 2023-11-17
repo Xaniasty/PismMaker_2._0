@@ -271,6 +271,7 @@
             buttonClientDataMaker.TabIndex = 17;
             buttonClientDataMaker.Text = "Pobierz dane klienta";
             buttonClientDataMaker.UseVisualStyleBackColor = true;
+            buttonClientDataMaker.Click += buttonClientDataMaker_Click;
             // 
             // progressBarClientData
             // 
@@ -508,6 +509,7 @@
             textBoxConsole.ScrollBars = ScrollBars.Vertical;
             textBoxConsole.Size = new Size(262, 138);
             textBoxConsole.TabIndex = 29;
+            textBoxConsole.TextChanged += textBoxConsole_TextChanged;
             // 
             // MainWindow
             // 

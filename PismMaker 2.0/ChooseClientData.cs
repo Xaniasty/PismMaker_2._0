@@ -12,14 +12,17 @@ namespace PismMaker_2._0
 {
     public partial class ChooseClientData : Form
     {
-
+        private MainWindow mainForm;
         Dictionary<string, string> newKlientProperty;
         public event EventHandler<string> DataSelected;
 
-        public ChooseClientData(Dictionary<string, string> klientProperty) : base()
+        public ChooseClientData(MainWindow form,Dictionary<string, string> klientProperty) : base()
         {
             InitializeComponent();
             loadDataIntoComboBox(klientProperty);
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
+            this.mainForm = form;
 
         }
 
@@ -83,7 +86,7 @@ namespace PismMaker_2._0
                     if (newKlientProperty.ContainsKey(selectedKey))
                     {
                         string selectedKeyValue = newKlientProperty[selectedKey];
-                        DataSelected?.Invoke(this, selectedKeyValue);
+                        DataSelected?.Invoke(this, selectedKey);
                         this.Close();
 
                     }

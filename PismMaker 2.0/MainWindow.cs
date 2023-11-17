@@ -11,6 +11,7 @@ using System;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 using PismMaker_2._0.Classes;
+using Microsoft.Office.Interop.Word;
 
 namespace PismMaker_2._0
 {
@@ -63,35 +64,6 @@ namespace PismMaker_2._0
             }
         }
 
-        private void DeleteAllQuesstions()
-        {
-            questions.Clear();
-            RefreshChoosedQuestionsList();
-        }
-
-        private void DeleteChoosedQuestion()
-        {
-            if (listBoxQuestions.SelectedIndex != -1)
-            {
-                int selectedIndex = listBoxQuestions.SelectedIndex;
-                int keyToRemove = selectedIndex + 1;
-                listBoxQuestions.Items.RemoveAt(selectedIndex);
-
-                if (questions.ContainsKey(keyToRemove))
-                {
-                    questions.Remove(keyToRemove);
-                    Dictionary<int, string> newQuestions = new Dictionary<int, string>();
-                    int newKey = 1;
-
-                    foreach (var question in questions)
-                    {
-                        newQuestions[newKey++] = question.Value;
-                    }
-
-                    questions = newQuestions;
-                }
-            }
-        }
 
         #endregion
 
@@ -200,6 +172,7 @@ namespace PismMaker_2._0
             }
             catch (Exception ex)
             {
+                MessageBox.Show("B³¹d przy wybieraniu zespo³u z listy - nie wybrano zespo³u");
                 ConsoleWindowWriteLine($"B³¹d przy wybieraniu zespo³u z listy - nie wybrano zespo³u");
             }
         }
@@ -235,6 +208,41 @@ namespace PismMaker_2._0
             questions.Clear();
             RefreshChoosedQuestionsList();
             ConsoleWindowWriteLine("Usuniêto wszystkie pytania");
+        }
+
+        private void buttonClientDataMaker_Click(object sender, EventArgs e)
+        {
+            if (!(string.IsNullOrEmpty(textboxClientNumber.Text)) && textboxClientNumber.Text.Length == 10)
+            {
+
+                MessageBox.Show($"Pobieram dane klienta {textboxClientNumber.Text}");
+                //tutaj kod odpowiedzialny za przypisanie danych klienta z odpowiedniej bazy danych/scrapingu
+                //pogl¹dowo wymyœlone dane klienta
+                client.Name = "Jan Kowalski";
+                client.ClientNumber = textboxClientNumber.Text; //powinien braæ pod uwagê 10 cyfowe numeery trzeba to zaimplementowaæ
+                client.PhoneNumber = "123123123";
+                client.CaseNumber = textboxClientNumber.Text;
+
+
+                //wprwoadzenie danych do tabeli
+                textBoxClientAddres.Text = client.Address.ToString();
+                textBoxClientName.Text = client.Name.ToString();
+
+            }
+            else if (string.IsNullOrEmpty(textboxClientNumber.Text))
+            {
+                MessageBox.Show($"Numer klienta jest pusty!");
+
+            }
+            else if (textboxClientNumber.Text.Length < 10 || textboxClientNumber.Text.Length > 10)
+            {
+                MessageBox.Show($"Nieprawid³owy numer klienta - mniej lub wiêcej ni¿ 10 cyfr");
+            }
+        }
+
+        private void textBoxConsole_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
