@@ -12,14 +12,12 @@ using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 using PismMaker_2._0.Classes;
 using Microsoft.Office.Interop.Word;
+using System.Reflection.Emit;
 
 namespace PismMaker_2._0
 {
     public partial class MainWindow : Form
     {
-
-        
-
 
         #region Variables & classes
 
@@ -31,6 +29,9 @@ namespace PismMaker_2._0
         private Dictionary<int, string> questions = new Dictionary<int, string>();
         private int consoleLineNumber = 0;
         private string questionsFieldVariable;
+        private DateTime today = DateTime.Today;
+        private DateTime replyDate;
+
 
         Client client;
 
@@ -38,6 +39,15 @@ namespace PismMaker_2._0
 
 
         #region Methods
+
+        public void SetReplyDateValue(DateTime newReplyDate)
+        {
+            replyDate = newReplyDate;
+            this.textBoxReplyDateDay.Text = newReplyDate.Day.ToString();
+            this.textBoxReplyDateMonth.Text = newReplyDate.Month.ToString();
+            this.textBoxReplyDateYear.Text = newReplyDate.Year.ToString();
+        }
+
 
 
         public void ConsoleWindowWriteLine(string text)
@@ -61,11 +71,9 @@ namespace PismMaker_2._0
         public void EditQuestion(int key, string value)
         {
             questions[key] = value; //aby edytowac dobre pytanie do okna questionSelect muszê przesy³aæ odpowiedni klucz
-            RefreshChoosedQuestionsList(); 
+            RefreshChoosedQuestionsList();
         }
 
-
-   
         private void RefreshChoosedQuestionsList()
         {
             listBoxQuestions.Items.Clear();
@@ -75,8 +83,6 @@ namespace PismMaker_2._0
                 listBoxQuestions.Items.Add(question.Value);
             }
         }
-
-
         #endregion
 
 
@@ -84,12 +90,16 @@ namespace PismMaker_2._0
         {
             InitializeComponent();
             this.Paint += MainForm_Paint;
+            replyDate = today.AddDays(20);
+            this.textBoxReplyDateDay.Text = replyDate.Day.ToString();
+            this.textBoxReplyDateMonth.Text = replyDate.Month.ToString();
+            this.textBoxReplyDateYear.Text = replyDate.Year.ToString();
             client = new Client();
+            ConsoleWindowWriteLine($"Dzisiejszy dzieñ: {today.ToString("dd-MM-yyyy")}");
         }
 
         private void MainWindow_Load(object sender, EventArgs e)
         {
-
             LoadDataIntoComboBoxTeamChoose();
 
             #region odczyt excel pytania
@@ -125,8 +135,6 @@ namespace PismMaker_2._0
             }
             #endregion
 
-
-
         }
 
         private void MainForm_Paint(object sender, PaintEventArgs e)
@@ -147,6 +155,8 @@ namespace PismMaker_2._0
                 e.Graphics.FillRectangle(brush, this.ClientRectangle);
             }
         }
+
+
 
         #region WindowsForms_Methods
 
@@ -189,6 +199,15 @@ namespace PismMaker_2._0
             }
         }
 
+        private void buttonChangeReplyDate_Click(object sender, EventArgs e)
+        {
+            ConsoleWindowWriteLine("Rozpoczynam zmianê daty");
+            SetReplyDate setReplyDateWindow = new SetReplyDate(this, ref client, replyDate);
+            setReplyDateWindow.Show();
+        }
+
+
+
         private void buttonChoosedQuestionEdit_Click(object sender, EventArgs e)
         {
             ConsoleWindowWriteLine("Rozpoczynam edytowanie wybranego pytania z listy");
@@ -205,10 +224,10 @@ namespace PismMaker_2._0
 
                     if (comboBoxChooseTeam.SelectedItem.ToString() == "ENT")
                     {
-                        QuestionSelectWindow questionSelectWindow = new QuestionSelectWindow(this, excelQuestionsENT, questions, ref client, keyInDict, valueInDict, editQuestionFlag) ;
+                        QuestionSelectWindow questionSelectWindow = new QuestionSelectWindow(this, excelQuestionsENT, questions, ref client, keyInDict, valueInDict, editQuestionFlag);
                         questionSelectWindow.Show();
                     }
-                    else if (comboBoxChooseTeam.SelectedItem.ToString() == "CORP") //musze tu i tu dodawaæ key w dicie oraz index z listy
+                    else if (comboBoxChooseTeam.SelectedItem.ToString() == "CORP")
                     {
                         QuestionSelectWindow questionSelectWindow = new QuestionSelectWindow(this, excelQuestionsCORP, questions, ref client, keyInDict, valueInDict, editQuestionFlag);
                         questionSelectWindow.Show();
@@ -270,7 +289,7 @@ namespace PismMaker_2._0
                 //tutaj kod odpowiedzialny za przypisanie danych klienta z odpowiedniej bazy danych/scrapingu
                 //pogl¹dowo wymyœlone dane klienta
                 client.Name = "Jan Kowalski";
-                client.ClientNumber = textboxClientNumber.Text; //powinien braæ pod uwagê 10 cyfowe numeery trzeba to zaimplementowaæ
+                client.ClientNumber = textboxClientNumber.Text;
                 client.PhoneNumber = "123123123";
                 client.CaseNumber = textboxClientNumber.Text;
 

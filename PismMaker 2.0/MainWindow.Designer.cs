@@ -48,8 +48,6 @@
             buttonClientDataMaker = new Button();
             progressBarClientData = new ProgressBar();
             tableLayoutPanel1 = new TableLayoutPanel();
-            textBoxReplyDate = new TextBox();
-            labelReplyDate = new Label();
             textboxClientNumber = new TextBox();
             labelAddress = new Label();
             labelCaseNumber = new Label();
@@ -58,6 +56,11 @@
             textBoxCaseNumber = new TextBox();
             textBoxClientName = new TextBox();
             labelClientNumber = new Label();
+            tableLayoutPanel2 = new TableLayoutPanel();
+            textBoxReplyDateYear = new TextBox();
+            textBoxReplyDateMonth = new TextBox();
+            textBoxReplyDateDay = new TextBox();
+            labelReplyDate = new Label();
             buttonChangeReplyDate = new Button();
             buttonChooseQuestion = new Button();
             buttonDeleteChoosedQuestion = new Button();
@@ -71,6 +74,7 @@
             buttonChoosedQuestionEdit = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             tableLayoutPanel1.SuspendLayout();
+            tableLayoutPanel2.SuspendLayout();
             SuspendLayout();
             // 
             // labelAppName
@@ -286,8 +290,6 @@
             tableLayoutPanel1.ColumnCount = 2;
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 80F));
-            tableLayoutPanel1.Controls.Add(textBoxReplyDate, 1, 4);
-            tableLayoutPanel1.Controls.Add(labelReplyDate, 0, 4);
             tableLayoutPanel1.Controls.Add(textboxClientNumber, 1, 0);
             tableLayoutPanel1.Controls.Add(labelAddress, 0, 3);
             tableLayoutPanel1.Controls.Add(labelCaseNumber, 0, 1);
@@ -296,6 +298,8 @@
             tableLayoutPanel1.Controls.Add(textBoxCaseNumber, 1, 1);
             tableLayoutPanel1.Controls.Add(textBoxClientName, 1, 2);
             tableLayoutPanel1.Controls.Add(labelClientNumber, 0, 0);
+            tableLayoutPanel1.Controls.Add(tableLayoutPanel2, 1, 4);
+            tableLayoutPanel1.Controls.Add(labelReplyDate, 0, 4);
             tableLayoutPanel1.Location = new Point(487, 118);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 5;
@@ -304,27 +308,9 @@
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
-            tableLayoutPanel1.Size = new Size(589, 167);
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel1.Size = new Size(589, 179);
             tableLayoutPanel1.TabIndex = 19;
-            // 
-            // textBoxReplyDate
-            // 
-            textBoxReplyDate.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point);
-            textBoxReplyDate.Location = new Point(120, 135);
-            textBoxReplyDate.Multiline = true;
-            textBoxReplyDate.Name = "textBoxReplyDate";
-            textBoxReplyDate.Size = new Size(466, 27);
-            textBoxReplyDate.TabIndex = 9;
-            // 
-            // labelReplyDate
-            // 
-            labelReplyDate.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point);
-            labelReplyDate.Location = new Point(3, 132);
-            labelReplyDate.Name = "labelReplyDate";
-            labelReplyDate.Size = new Size(111, 30);
-            labelReplyDate.TabIndex = 4;
-            labelReplyDate.Text = "Data odpowiedzi";
-            labelReplyDate.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // textboxClientNumber
             // 
@@ -338,7 +324,7 @@
             // labelAddress
             // 
             labelAddress.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point);
-            labelAddress.Location = new Point(3, 99);
+            labelAddress.Location = new Point(3, 105);
             labelAddress.Name = "labelAddress";
             labelAddress.Size = new Size(111, 33);
             labelAddress.TabIndex = 2;
@@ -348,7 +334,7 @@
             // labelCaseNumber
             // 
             labelCaseNumber.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point);
-            labelCaseNumber.Location = new Point(3, 33);
+            labelCaseNumber.Location = new Point(3, 35);
             labelCaseNumber.Name = "labelCaseNumber";
             labelCaseNumber.Size = new Size(111, 33);
             labelCaseNumber.TabIndex = 3;
@@ -358,7 +344,7 @@
             // labelClientName
             // 
             labelClientName.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point);
-            labelClientName.Location = new Point(3, 66);
+            labelClientName.Location = new Point(3, 70);
             labelClientName.Name = "labelClientName";
             labelClientName.Size = new Size(111, 33);
             labelClientName.TabIndex = 1;
@@ -370,7 +356,7 @@
             textBoxClientAddres.BackColor = SystemColors.InactiveCaption;
             textBoxClientAddres.Enabled = false;
             textBoxClientAddres.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point);
-            textBoxClientAddres.Location = new Point(120, 102);
+            textBoxClientAddres.Location = new Point(120, 108);
             textBoxClientAddres.Multiline = true;
             textBoxClientAddres.Name = "textBoxClientAddres";
             textBoxClientAddres.Size = new Size(466, 27);
@@ -379,7 +365,7 @@
             // textBoxCaseNumber
             // 
             textBoxCaseNumber.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point);
-            textBoxCaseNumber.Location = new Point(120, 36);
+            textBoxCaseNumber.Location = new Point(120, 38);
             textBoxCaseNumber.Multiline = true;
             textBoxCaseNumber.Name = "textBoxCaseNumber";
             textBoxCaseNumber.Size = new Size(466, 27);
@@ -390,7 +376,7 @@
             textBoxClientName.BackColor = SystemColors.InactiveCaption;
             textBoxClientName.Enabled = false;
             textBoxClientName.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point);
-            textBoxClientName.Location = new Point(120, 69);
+            textBoxClientName.Location = new Point(120, 73);
             textBoxClientName.Multiline = true;
             textBoxClientName.Name = "textBoxClientName";
             textBoxClientName.Size = new Size(466, 27);
@@ -406,6 +392,65 @@
             labelClientNumber.Text = "Numer klienta";
             labelClientNumber.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // tableLayoutPanel2
+            // 
+            tableLayoutPanel2.ColumnCount = 3;
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel2.Controls.Add(textBoxReplyDateYear, 2, 0);
+            tableLayoutPanel2.Controls.Add(textBoxReplyDateMonth, 1, 0);
+            tableLayoutPanel2.Controls.Add(textBoxReplyDateDay, 0, 0);
+            tableLayoutPanel2.Location = new Point(120, 143);
+            tableLayoutPanel2.Name = "tableLayoutPanel2";
+            tableLayoutPanel2.RowCount = 1;
+            tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel2.Size = new Size(466, 29);
+            tableLayoutPanel2.TabIndex = 9;
+            // 
+            // textBoxReplyDateYear
+            // 
+            textBoxReplyDateYear.BackColor = SystemColors.InactiveCaption;
+            textBoxReplyDateYear.Enabled = false;
+            textBoxReplyDateYear.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point);
+            textBoxReplyDateYear.Location = new Point(235, 3);
+            textBoxReplyDateYear.Name = "textBoxReplyDateYear";
+            textBoxReplyDateYear.Size = new Size(228, 25);
+            textBoxReplyDateYear.TabIndex = 2;
+            textBoxReplyDateYear.TextAlign = HorizontalAlignment.Center;
+            // 
+            // textBoxReplyDateMonth
+            // 
+            textBoxReplyDateMonth.BackColor = SystemColors.InactiveCaption;
+            textBoxReplyDateMonth.Enabled = false;
+            textBoxReplyDateMonth.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point);
+            textBoxReplyDateMonth.Location = new Point(119, 3);
+            textBoxReplyDateMonth.Name = "textBoxReplyDateMonth";
+            textBoxReplyDateMonth.Size = new Size(110, 25);
+            textBoxReplyDateMonth.TabIndex = 1;
+            textBoxReplyDateMonth.TextAlign = HorizontalAlignment.Center;
+            // 
+            // textBoxReplyDateDay
+            // 
+            textBoxReplyDateDay.BackColor = SystemColors.InactiveCaption;
+            textBoxReplyDateDay.Enabled = false;
+            textBoxReplyDateDay.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point);
+            textBoxReplyDateDay.Location = new Point(3, 3);
+            textBoxReplyDateDay.Name = "textBoxReplyDateDay";
+            textBoxReplyDateDay.Size = new Size(110, 25);
+            textBoxReplyDateDay.TabIndex = 0;
+            textBoxReplyDateDay.TextAlign = HorizontalAlignment.Center;
+            // 
+            // labelReplyDate
+            // 
+            labelReplyDate.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point);
+            labelReplyDate.Location = new Point(3, 140);
+            labelReplyDate.Name = "labelReplyDate";
+            labelReplyDate.Size = new Size(111, 39);
+            labelReplyDate.TabIndex = 4;
+            labelReplyDate.Text = "Data odpowiedzi\r\n(dd-MM-rrrr)";
+            labelReplyDate.TextAlign = ContentAlignment.MiddleCenter;
+            // 
             // buttonChangeReplyDate
             // 
             buttonChangeReplyDate.Font = new Font("Segoe UI", 8.25F, FontStyle.Bold, GraphicsUnit.Point);
@@ -415,6 +460,7 @@
             buttonChangeReplyDate.TabIndex = 20;
             buttonChangeReplyDate.Text = "Zmień datę odpowiedzi";
             buttonChangeReplyDate.UseVisualStyleBackColor = true;
+            buttonChangeReplyDate.Click += buttonChangeReplyDate_Click;
             // 
             // buttonChooseQuestion
             // 
@@ -569,6 +615,8 @@
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             tableLayoutPanel1.ResumeLayout(false);
             tableLayoutPanel1.PerformLayout();
+            tableLayoutPanel2.ResumeLayout(false);
+            tableLayoutPanel2.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -601,7 +649,6 @@
         private Label labelCaseNumber;
         private Label labelReplyDate;
         private TextBox textboxClientNumber;
-        private TextBox textBoxReplyDate;
         private TextBox textBoxClientAddres;
         private TextBox textBoxCaseNumber;
         private TextBox textBoxClientName;
@@ -616,5 +663,9 @@
         private Button buttonPrelookMessange;
         private TextBox textBoxConsole;
         private Button buttonChoosedQuestionEdit;
+        private TableLayoutPanel tableLayoutPanel2;
+        private TextBox textBoxReplyDateYear;
+        private TextBox textBoxReplyDateMonth;
+        private TextBox textBoxReplyDateDay;
     }
 }
