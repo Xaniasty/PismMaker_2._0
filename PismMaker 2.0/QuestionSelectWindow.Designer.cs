@@ -48,6 +48,7 @@
             // 
             // textBoxSelectedQuestion
             // 
+            textBoxSelectedQuestion.BackColor = SystemColors.ScrollBar;
             textBoxSelectedQuestion.Font = new Font("Segoe UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
             textBoxSelectedQuestion.Location = new Point(319, 97);
             textBoxSelectedQuestion.Multiline = true;

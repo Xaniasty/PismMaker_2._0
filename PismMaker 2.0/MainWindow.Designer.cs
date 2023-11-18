@@ -68,6 +68,7 @@
             buttonCreateMessange = new Button();
             buttonPrelookMessange = new Button();
             textBoxConsole = new TextBox();
+            buttonChoosedQuestionEdit = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             tableLayoutPanel1.SuspendLayout();
             SuspendLayout();
@@ -429,7 +430,7 @@
             // buttonDeleteChoosedQuestion
             // 
             buttonDeleteChoosedQuestion.Font = new Font("Segoe UI", 8.25F, FontStyle.Bold, GraphicsUnit.Point);
-            buttonDeleteChoosedQuestion.Location = new Point(320, 395);
+            buttonDeleteChoosedQuestion.Location = new Point(320, 442);
             buttonDeleteChoosedQuestion.Name = "buttonDeleteChoosedQuestion";
             buttonDeleteChoosedQuestion.Size = new Size(143, 41);
             buttonDeleteChoosedQuestion.TabIndex = 22;
@@ -440,7 +441,7 @@
             // buttonDeleteAllQuestions
             // 
             buttonDeleteAllQuestions.Font = new Font("Segoe UI", 8.25F, FontStyle.Bold, GraphicsUnit.Point);
-            buttonDeleteAllQuestions.Location = new Point(320, 442);
+            buttonDeleteAllQuestions.Location = new Point(320, 489);
             buttonDeleteAllQuestions.Name = "buttonDeleteAllQuestions";
             buttonDeleteAllQuestions.Size = new Size(143, 41);
             buttonDeleteAllQuestions.TabIndex = 23;
@@ -511,12 +512,24 @@
             textBoxConsole.TabIndex = 29;
             textBoxConsole.TextChanged += textBoxConsole_TextChanged;
             // 
+            // buttonChoosedQuestionEdit
+            // 
+            buttonChoosedQuestionEdit.Font = new Font("Segoe UI", 8.25F, FontStyle.Bold, GraphicsUnit.Point);
+            buttonChoosedQuestionEdit.Location = new Point(320, 395);
+            buttonChoosedQuestionEdit.Name = "buttonChoosedQuestionEdit";
+            buttonChoosedQuestionEdit.Size = new Size(143, 41);
+            buttonChoosedQuestionEdit.TabIndex = 30;
+            buttonChoosedQuestionEdit.Text = "Edytuj pytanie";
+            buttonChoosedQuestionEdit.UseVisualStyleBackColor = true;
+            buttonChoosedQuestionEdit.Click += buttonChoosedQuestionEdit_Click;
+            // 
             // MainWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.ScrollBar;
             ClientSize = new Size(1099, 826);
+            Controls.Add(buttonChoosedQuestionEdit);
             Controls.Add(textBoxConsole);
             Controls.Add(buttonPrelookMessange);
             Controls.Add(buttonCreateMessange);
@@ -602,5 +615,6 @@
         private Button buttonCreateMessange;
         private Button buttonPrelookMessange;
         private TextBox textBoxConsole;
+        private Button buttonChoosedQuestionEdit;
     }
 }

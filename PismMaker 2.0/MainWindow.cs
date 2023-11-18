@@ -17,6 +17,10 @@ namespace PismMaker_2._0
 {
     public partial class MainWindow : Form
     {
+
+        
+
+
         #region Variables & classes
 
         public static string filePathENT = @"C:\Users\Patryk\Desktop\PismMaker 2.0\Excel_pytania\Pytania_ENT.xlsx"; //bêdzie ustalane na postawie klasy User
@@ -24,9 +28,9 @@ namespace PismMaker_2._0
         private Dictionary<string, string> excelQuestionsENT;
         private Dictionary<string, string> excelQuestionsCORP;
         private List<string> teamsNames = new List<string>() { "ENT", "CORP" };
-        private string questionsFieldVariable;
         private Dictionary<int, string> questions = new Dictionary<int, string>();
         private int consoleLineNumber = 0;
+        private string questionsFieldVariable;
 
         Client client;
 
@@ -54,6 +58,14 @@ namespace PismMaker_2._0
             RefreshChoosedQuestionsList();
         }
 
+        public void EditQuestion(int key, string value)
+        {
+            questions[key] = value; //aby edytowac dobre pytanie do okna questionSelect muszê przesy³aæ odpowiedni klucz
+            RefreshChoosedQuestionsList(); 
+        }
+
+
+   
         private void RefreshChoosedQuestionsList()
         {
             listBoxQuestions.Items.Clear();
@@ -155,13 +167,13 @@ namespace PismMaker_2._0
             {
                 if (comboBoxChooseTeam.SelectedItem.ToString() == "ENT")
                 {
-                    QuestionSelectWindow questionSelectWindow = new QuestionSelectWindow(this, excelQuestionsENT, questions, ref client);
+                    QuestionSelectWindow questionSelectWindow = new QuestionSelectWindow(this, excelQuestionsENT, questions, ref client, 0, string.Empty);
                     questionSelectWindow.Show();
 
                 }
                 else if (comboBoxChooseTeam.SelectedItem.ToString() == "CORP")
                 {
-                    QuestionSelectWindow questionSelectWindow = new QuestionSelectWindow(this, excelQuestionsCORP, questions, ref client);
+                    QuestionSelectWindow questionSelectWindow = new QuestionSelectWindow(this, excelQuestionsCORP, questions, ref client, 0, string.Empty);
                     questionSelectWindow.Show();
                 }
                 else
@@ -175,6 +187,45 @@ namespace PismMaker_2._0
                 MessageBox.Show("B³¹d przy wybieraniu zespo³u z listy - nie wybrano zespo³u");
                 ConsoleWindowWriteLine($"B³¹d przy wybieraniu zespo³u z listy - nie wybrano zespo³u");
             }
+        }
+
+        private void buttonChoosedQuestionEdit_Click(object sender, EventArgs e)
+        {
+            ConsoleWindowWriteLine("Rozpoczynam edytowanie wybranego pytania z listy");
+            try
+            {
+                bool editQuestionFlag = true;
+
+                if (listBoxQuestions.SelectedIndex != -1)
+                {
+
+                    int selectedIndex = listBoxQuestions.SelectedIndex;
+                    int keyInDict = selectedIndex + 1;
+                    string valueInDict = questions[keyInDict];
+
+                    if (comboBoxChooseTeam.SelectedItem.ToString() == "ENT")
+                    {
+                        QuestionSelectWindow questionSelectWindow = new QuestionSelectWindow(this, excelQuestionsENT, questions, ref client, keyInDict, valueInDict, editQuestionFlag) ;
+                        questionSelectWindow.Show();
+                    }
+                    else if (comboBoxChooseTeam.SelectedItem.ToString() == "CORP") //musze tu i tu dodawaæ key w dicie oraz index z listy
+                    {
+                        QuestionSelectWindow questionSelectWindow = new QuestionSelectWindow(this, excelQuestionsCORP, questions, ref client, keyInDict, valueInDict, editQuestionFlag);
+                        questionSelectWindow.Show();
+                    }
+                    else
+                    {
+                        ConsoleWindowWriteLine("Nie ma takiego zespo³u - wybierz inny");
+                        MessageBox.Show("Nie ma takiego zespo³u, coœ posz³o nie tak");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("B³¹d przy wybieraniu zespo³u z listy - nie wybrano zespo³u");
+                ConsoleWindowWriteLine($"B³¹d przy wybieraniu zespo³u z listy - nie wybrano zespo³u");
+            }
+
         }
 
         private void buttonDeleteChoosedQuestion_Click(object sender, EventArgs e)
@@ -231,11 +282,13 @@ namespace PismMaker_2._0
             }
             else if (string.IsNullOrEmpty(textboxClientNumber.Text))
             {
+                ConsoleWindowWriteLine("Numer klienta pusty - wpisz numer w odpowiednie pole");
                 MessageBox.Show($"Numer klienta jest pusty!");
 
             }
             else if (textboxClientNumber.Text.Length < 10 || textboxClientNumber.Text.Length > 10)
             {
+                ConsoleWindowWriteLine("Nieprawid³owy numer klienta - mniej lub wiêcej ni¿ 10 cyfr");
                 MessageBox.Show($"Nieprawid³owy numer klienta - mniej lub wiêcej ni¿ 10 cyfr");
             }
         }
@@ -244,5 +297,7 @@ namespace PismMaker_2._0
         {
 
         }
+
+
     }
 }

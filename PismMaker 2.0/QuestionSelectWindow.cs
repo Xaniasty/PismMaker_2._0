@@ -21,6 +21,8 @@ namespace PismMaker_2._0
         private Dictionary<string, string> questionsDictionary;
         Dictionary<string, string> klientInfoDict;
         private Dictionary<int, string> questions;
+        private Boolean questionToEdit;
+        private int selectedQuestionKey;
 
         static Dictionary<string, string> ObjectToDictionary(object obj)
         {
@@ -38,7 +40,7 @@ namespace PismMaker_2._0
             return dictionary;
         }
 
-        public QuestionSelectWindow(MainWindow form, Dictionary<string, string> excelQuestions, Dictionary<int, string> questions, ref Client client)
+        public QuestionSelectWindow(MainWindow form, Dictionary<string, string> excelQuestions, Dictionary<int, string> questions, ref Client client, int selectedQuestionKey, string selectedQuestionValue, Boolean editQuestion = false)
         {
             InitializeComponent();
             this.Paint += QuestionSelectWindow_Paint;
@@ -46,9 +48,14 @@ namespace PismMaker_2._0
             this.MaximizeBox = false;
             this.mainForm = form;
             this.questions = questions;
+            this.questionToEdit = editQuestion;
+            this.selectedQuestionKey = selectedQuestionKey;
+            this.textBoxSelectedQuestion.Text = selectedQuestionValue;
+            this.buttonQuestionAdd.Text = editQuestion ? "Wstaw poprawione pytanie" : "Dodaj pytanie do listy";
             loadDataIntoComboBox(excelQuestions);
             textBoxSelectedQuestion.ReadOnly = true;
             klientInfoDict = ObjectToDictionary(client);
+
         }
 
 
@@ -59,7 +66,6 @@ namespace PismMaker_2._0
             Color orange = Color.FromArgb(255, 165, 0); //pomarańczowy
             Color deepBlue = Color.FromArgb(70, 130, 180); //błękitny
             Color black = Color.FromArgb(0, 0, 0); //czarny
-
 
             using (LinearGradientBrush brush = new LinearGradientBrush(
                 this.ClientRectangle,
@@ -161,14 +167,15 @@ namespace PismMaker_2._0
             if (textBoxSelectedQuestion.ReadOnly == true)
             {
                 textBoxSelectedQuestion.ReadOnly = false;
+                textBoxSelectedQuestion.BackColor = SystemColors.Window;
                 buttonQuestionEdit.Text = "Zablokuj pytanie";
                 this.mainForm.ConsoleWindowWriteLine($"Zablokowałem pytanie do edycji");
-
             }
             else if (textBoxSelectedQuestion.ReadOnly == false)
             {
                 textBoxSelectedQuestion.ReadOnly = true;
                 buttonQuestionEdit.Text = "Edytuj pytanie";
+                textBoxSelectedQuestion.BackColor = SystemColors.ScrollBar;
                 this.mainForm.ConsoleWindowWriteLine($"Odblokowałem pytanie do edycji");
             }
         }
@@ -177,17 +184,34 @@ namespace PismMaker_2._0
         {
             try
             {
-                if (!string.IsNullOrEmpty(textBoxSelectedQuestion.Text))
+                if (questionToEdit == true) //jeżeli ktoś kliknie edytuj pytanie
                 {
-                    int newKey = questions.Count + 1;
-                    mainForm.AddQuestion(newKey, textBoxSelectedQuestion.Text);
-                    this.mainForm.ConsoleWindowWriteLine($"Dodaje {newKey} pytanie do listy");
-                    this.Close();
+                    if (!string.IsNullOrEmpty(textBoxSelectedQuestion.Text))
+                    {
+                        mainForm.EditQuestion(selectedQuestionKey, textBoxSelectedQuestion.Text);
+                        this.mainForm.ConsoleWindowWriteLine($"Edytuje {selectedQuestionKey} pytanie na liście");
+                        this.Close();
+                    }
+                    else
+                    {
+                        this.mainForm.ConsoleWindowWriteLine($"Nie wprowadzono lub wybrano pytania. Nie dodano pustego ciągu znaków.");
+                        MessageBox.Show("Wybierz lub wprowadź treść pytania.");
+                    }
                 }
-                else
+                else if (questionToEdit == false) //jeżeli ktoś kliknie dodaj pytanie
                 {
-                    this.mainForm.ConsoleWindowWriteLine($"Nie wprowadzono lub wybrano pytania. Nie dodano pustego ciągu znaków.");
-                    MessageBox.Show("Wybierz lub wprowadź treść pytania.");
+                    if (!string.IsNullOrEmpty(textBoxSelectedQuestion.Text))
+                    {
+                        int newKey = questions.Count + 1;
+                        mainForm.AddQuestion(newKey, textBoxSelectedQuestion.Text);
+                        this.mainForm.ConsoleWindowWriteLine($"Dodaje {newKey} pytanie do listy");
+                        this.Close();
+                    }
+                    else
+                    {
+                        this.mainForm.ConsoleWindowWriteLine($"Nie wprowadzono lub wybrano pytania. Nie dodano pustego ciągu znaków.");
+                        MessageBox.Show("Wybierz lub wprowadź treść pytania.");
+                    }
                 }
             }
             catch (Exception ex)
@@ -197,6 +221,6 @@ namespace PismMaker_2._0
             }
         }
 
-       
+
     }
 }
