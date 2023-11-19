@@ -138,6 +138,19 @@ namespace PismMaker_2._0
 
         }
 
+        private void textBoxSelectedQuestion_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control && e.KeyCode == Keys.Z)
+            {
+                textBoxSelectedQuestion.Undo();
+                e.Handled = true;
+            }
+            if (e.Control && e.KeyCode == Keys.Y)
+            {
+                e.Handled = true;
+            }
+        }
+
         private void buttonClientDataAdd_Click(object sender, EventArgs e)
         {
             if (textBoxSelectedQuestion.ReadOnly == true)
@@ -159,7 +172,14 @@ namespace PismMaker_2._0
             string currentText = textBoxSelectedQuestion.Text;
             textBoxSelectedQuestion.Text = currentText.Insert(selectionStart, $" {selectedData}");
             textBoxSelectedQuestion.SelectionStart = textBoxSelectedQuestion.Text.Length;
-            this.mainForm.ConsoleWindowWriteLine($"Dodałem dane klienta do pytania: {selectedData}");
+        }
+
+        private void buttonToolDotPunkter_Click(object sender, EventArgs e)
+        {
+            int selectionStart = textBoxSelectedQuestion.SelectionStart;
+            string currentText = textBoxSelectedQuestion.Text;
+            textBoxSelectedQuestion.Text = currentText.Insert(selectionStart, $"    \u2022  ");
+            textBoxSelectedQuestion.SelectionStart = textBoxSelectedQuestion.Text.Length;
         }
 
         private void buttonQuestionEdit_Click(object sender, EventArgs e)

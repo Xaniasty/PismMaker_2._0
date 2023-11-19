@@ -65,6 +65,9 @@ namespace PismMaker_2._0
             if (DateTime.TryParse(labelNewReplyDate.Text, out DateTime newReplyDate))
             {
                 mainForm.SetReplyDateValue(newReplyDate);
+                mainForm.ConsoleWindowWriteLine($"Wprowadziłem nową datę {newReplyDate.ToString("dd-MM-yyyy")}");
+                //client replydate tez zaktualizuj wlasicowsc
+
             }
 
             this.Close();

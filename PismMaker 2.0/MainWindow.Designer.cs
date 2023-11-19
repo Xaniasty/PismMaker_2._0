@@ -177,6 +177,7 @@
             comboBoxChooseTeam.Name = "comboBoxChooseTeam";
             comboBoxChooseTeam.Size = new Size(333, 29);
             comboBoxChooseTeam.TabIndex = 8;
+            comboBoxChooseTeam.SelectedIndexChanged += comboBoxChooseTeam_SelectedIndexChanged;
             // 
             // comboBoxChooseTemplate
             // 
@@ -534,6 +535,7 @@
             buttonCreateMessange.TabIndex = 27;
             buttonCreateMessange.Text = "Stwórz pismo";
             buttonCreateMessange.UseVisualStyleBackColor = true;
+            buttonCreateMessange.Click += buttonCreateMessange_Click;
             // 
             // buttonPrelookMessange
             // 

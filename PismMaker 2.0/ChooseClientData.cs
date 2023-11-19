@@ -86,7 +86,8 @@ namespace PismMaker_2._0
                     if (newKlientProperty.ContainsKey(selectedKey))
                     {
                         string selectedKeyValue = newKlientProperty[selectedKey];
-                        DataSelected?.Invoke(this, selectedKey);
+                        DataSelected?.Invoke(this, selectedKeyValue);
+                        this.mainForm.ConsoleWindowWriteLine($"Dodaję do pytania dane klienta o nazwie: {selectedKey}");
                         this.Close();
 
                     }

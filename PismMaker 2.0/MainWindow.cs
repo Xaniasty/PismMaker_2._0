@@ -11,8 +11,14 @@ using System;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 using PismMaker_2._0.Classes;
-using Microsoft.Office.Interop.Word;
+using Word = Microsoft.Office.Interop.Word;
 using System.Reflection.Emit;
+using Microsoft.VisualBasic.ApplicationServices;
+using System.DirectoryServices;
+using System.Drawing.Text;
+using System.Security.Cryptography.X509Certificates;
+using System.Diagnostics;
+
 
 namespace PismMaker_2._0
 {
@@ -25,15 +31,20 @@ namespace PismMaker_2._0
         public static string filePathCorp = @"C:\Users\Patryk\Desktop\PismMaker 2.0\Excel_pytania\Pytania_CORP.xlsx"; //bêdzie ustalne na podstawie klasy User
         private Dictionary<string, string> excelQuestionsENT;
         private Dictionary<string, string> excelQuestionsCORP;
-        private List<string> teamsNames = new List<string>() { "ENT", "CORP" };
+        private List<string> teamsNames = new List<string>() { "ENT", "CORPO" };
+        private Dictionary<string, Dictionary<string, string>> templates;
+        private List<string> templatesKeys;
         private Dictionary<int, string> questions = new Dictionary<int, string>();
         private int consoleLineNumber = 0;
         private string questionsFieldVariable;
         private DateTime today = DateTime.Today;
         private DateTime replyDate;
+        private string temaplatePath;
+
 
 
         Client client;
+        PismmakerUser pismmakerUser;
 
         #endregion
 
@@ -59,6 +70,40 @@ namespace PismMaker_2._0
         private void LoadDataIntoComboBoxTeamChoose()
         {
             comboBoxChooseTeam.Items.AddRange(teamsNames.ToArray());
+        }
+
+        private void LoadDataIntoComboboxChooseTemplates(Dictionary<string, Dictionary<string, string>> someDictionary)
+        {
+            comboBoxChooseTemplate.Items.Clear();
+            string selectedTeam = comboBoxChooseTeam.Text;
+
+
+            switch (selectedTeam)
+            {
+                case "ENT":
+                    if (someDictionary.ContainsKey("ENT"))
+                    {
+                        templatesKeys = new List<string>(someDictionary["ENT"].Keys);
+                        comboBoxChooseTemplate.Items.AddRange(templatesKeys.ToArray());
+                        comboBoxChooseTemplate.Refresh();
+                    }
+                    break;
+
+                case "CORPO":
+                    if (someDictionary.ContainsKey("CORPO"))
+                    {
+                        templatesKeys = new List<string>(someDictionary["CORPO"].Keys);
+                        comboBoxChooseTemplate.Items.AddRange(templatesKeys.ToArray());
+                        comboBoxChooseTemplate.Refresh();
+                    }
+                    break;
+
+                default:
+                    MessageBox.Show("BRAK WYBRANEGO TEAMU");
+                    break;
+            }
+
+
         }
 
 
@@ -90,18 +135,28 @@ namespace PismMaker_2._0
         {
             InitializeComponent();
             this.Paint += MainForm_Paint;
-            replyDate = today.AddDays(20);
+            replyDate = today;
             this.textBoxReplyDateDay.Text = replyDate.Day.ToString();
             this.textBoxReplyDateMonth.Text = replyDate.Month.ToString();
             this.textBoxReplyDateYear.Text = replyDate.Year.ToString();
+            pismmakerUser = new PismmakerUser();
             client = new Client();
+            templates = pismmakerUser.GetDocxFilesInFolder(pismmakerUser.DesktopTemplatesPath);
+            foreach (var template in templates)
+            {
+                ConsoleWindowWriteLine($"{template.Key}");
+
+                foreach (var item in template.Value)
+                {
+                    Console.WriteLine(item);
+                }
+            }
             ConsoleWindowWriteLine($"Dzisiejszy dzieñ: {today.ToString("dd-MM-yyyy")}");
         }
 
         private void MainWindow_Load(object sender, EventArgs e)
         {
             LoadDataIntoComboBoxTeamChoose();
-
             #region odczyt excel pytania
             try
             {
@@ -134,7 +189,6 @@ namespace PismMaker_2._0
                 ConsoleWindowWriteLine($"B³¹d przy odczycie EXCEL {ex}");
             }
             #endregion
-
         }
 
         private void MainForm_Paint(object sender, PaintEventArgs e)
@@ -317,6 +371,41 @@ namespace PismMaker_2._0
 
         }
 
+        private void comboBoxChooseTeam_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            LoadDataIntoComboboxChooseTemplates(templates);
+        }
 
+        private void buttonCreateMessange_Click(object sender, EventArgs e)
+        {
+            //temaplatePath
+            string selectedTeam = comboBoxChooseTeam.Text;
+            string selectedTemplate = comboBoxChooseTemplate.Text;
+
+            if (templates.ContainsKey(selectedTeam))
+            {
+
+                Dictionary<string, string> teamDictionary = templates[selectedTeam];
+
+                if (teamDictionary.ContainsKey(selectedTemplate))
+                {
+                    string templateValue = teamDictionary[selectedTemplate];
+                    MessageBox.Show(templateValue);
+                    dynamic wordApp = Activator.CreateInstance(Type.GetTypeFromProgID("Word.Application"));
+                    dynamic wordDoc = wordApp.Documents.Open(templateValue);
+                    wordApp.Visible = true;
+
+                }
+                else
+                {
+                    MessageBox.Show($"Nie istnieje klucz {selectedTemplate} dla {selectedTeam}.");
+                }
+            }
+            else
+            {
+                MessageBox.Show($"Nie istnieje klucz {selectedTeam} w s³owniku g³ównym.");
+            }
+
+        }
     }
 }
