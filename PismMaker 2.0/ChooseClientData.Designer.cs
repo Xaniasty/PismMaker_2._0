@@ -69,7 +69,7 @@
             AcceptButton = buttonInjectClientData;
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.OrangeRed;
+            BackColor = Color.Navy;
             ClientSize = new Size(564, 519);
             Controls.Add(comboBoxClientProperty);
             Controls.Add(textBoxClientPropertyValue);

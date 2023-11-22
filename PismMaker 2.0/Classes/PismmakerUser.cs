@@ -4,24 +4,31 @@
     {
         #region Properties
 
-        static string corpo_path = $@"\Pliki Excel i Word\Word\Templatki"; //corpo path to folders
-        private string ent_path = $@"\Pliki Excel i Word\Word\Templatki"; //ent path to folders
+        static string excels_path = @"C:\Users\Patryk\Desktop\Pliki Excel i Word\Foldery excel";
+        static string templates_path = $@"\Pliki Excel i Word\Word\Templatki"; //corpo path to folders
+        static string attachents_path = $@"\Pliki Excel i Word\Word\Załączniki"; //ent path to folders
+        static string savePath = $@"Pliki Excel i Word\Output";
 
         public string CK { get; set; }
         public string Name { get; set; }
         public string Team { get; set; }
         public string ExcelPath { get; set; }
+        public string DesktopPath { get; set; }
         public string FolderSavePath { get; private set; }
         public string DesktopTemplatesPath { get; private set; }
+        public string DesktopAttachemntsPath { get; private set; }
 
-        public PismmakerUser(string ck = null, string name = null, string team = null, string excelPath = null)
+        public PismmakerUser(string ck = null, string name = null, string team = null)
         {
             CK = string.IsNullOrEmpty(ck) ? "<<ck>>" : ck;
             Name = string.IsNullOrEmpty(name) ? "<<name>>" : name;
             Team = string.IsNullOrEmpty(team) ? "<<team>>" : team;
-            ExcelPath = string.IsNullOrEmpty(excelPath) ? "<<excelPath>>" : excelPath;
-            DesktopTemplatesPath = $"{GetDesktopPath()}{corpo_path}";
-            //FolderSavePath = $@"{DesktopPath}\{CK}\{Team}\Excel";
+            DesktopPath = GetDesktopPath();
+            DesktopTemplatesPath = $"{DesktopPath}{templates_path}";
+            DesktopAttachemntsPath = $"{DesktopPath}{attachents_path}";
+            FolderSavePath = $@"{DesktopPath}\{savePath}\{Team}\{CK}\";
+            ExcelPath = $@"{excels_path}\{CK}\dm52cn.xlsx";
+            
 
         }
 

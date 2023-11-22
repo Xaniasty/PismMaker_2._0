@@ -18,7 +18,7 @@ using System.DirectoryServices;
 using System.Drawing.Text;
 using System.Security.Cryptography.X509Certificates;
 using System.Diagnostics;
-
+using System.Net.Mail;
 
 namespace PismMaker_2._0
 {
@@ -33,6 +33,7 @@ namespace PismMaker_2._0
         private Dictionary<string, string> excelQuestionsCORP;
         private List<string> teamsNames = new List<string>() { "ENT", "CORPO" };
         private Dictionary<string, Dictionary<string, string>> templates;
+        private Dictionary<string, Dictionary<string, string>> attachments;
         private List<string> templatesKeys;
         private Dictionary<int, string> questions = new Dictionary<int, string>();
         private int consoleLineNumber = 0;
@@ -51,6 +52,25 @@ namespace PismMaker_2._0
 
         #region Methods
 
+
+        static Dictionary<string, string> ObjectToDictionary(object obj)
+        {
+
+            Type type = obj.GetType();
+            PropertyInfo[] properties = type.GetProperties();
+
+            Dictionary<string, string> dictionary = new Dictionary<string, string>();
+
+            foreach (PropertyInfo property in properties)
+            {
+                dictionary.Add(property.Name, property.GetValue(obj)?.ToString());
+            }
+
+            return dictionary;
+        }
+
+
+
         public void SetReplyDateValue(DateTime newReplyDate)
         {
             replyDate = newReplyDate;
@@ -59,6 +79,60 @@ namespace PismMaker_2._0
             this.textBoxReplyDateYear.Text = newReplyDate.Year.ToString();
         }
 
+
+        private void ReplaceTextAndCreateMessange(PismmakerUser user, Client client, Dictionary<string, string> templates, string choosedTemplate)
+        {
+            var wordApp = new Word.Application();
+            wordApp.Visible = false;
+            wordApp.ScreenUpdating = false;
+            Dictionary<string, string> klientInfoDict;
+            string filePath = templates[choosedTemplate];
+
+            klientInfoDict = ObjectToDictionary(client);
+
+            string replacementText = client.ConnectedString.ToString();
+
+            try
+            {
+                var doc = wordApp.Documents.Open(filePath);
+
+                foreach (var property in klientInfoDict)
+                {
+                    bool textFound = false;
+
+                    foreach (Word.Range storyRange in doc.StoryRanges)
+                    {
+                        var contentRange = doc.Content;
+                        contentRange.Find.ClearFormatting();
+                        contentRange.Find.Text = $"<<{property.Key}>>";
+
+                        if (contentRange.Find.Execute())
+                        {
+                            textFound = true;
+                            contentRange.Find.Replacement.Text = property.Value.ToString();
+                            MessageBox.Show(property.Value.ToString());
+                            contentRange.Find.Wrap = Word.WdFindWrap.wdFindContinue;
+                            contentRange.Find.Execute(Replace: Word.WdReplace.wdReplaceAll);
+                        }
+                    }
+
+                    if (!textFound)
+                    {
+                        ConsoleWindowWriteLine($"Nie znaleziono tekstu do zast¹pienia: {property.Key}");
+                    }
+                }
+
+                string newFolderPath = user.FolderSavePath;
+                string newFilePathWord = Path.Combine(newFolderPath, "NowyDokument.docx");
+                doc.SaveAs2(newFilePathWord, Word.WdSaveFormat.wdFormatDocumentDefault);
+                doc.Close();
+            }
+            finally
+            {
+                wordApp.ScreenUpdating = true;
+                wordApp.Quit();
+            }
+        }
 
 
         public void ConsoleWindowWriteLine(string text)
@@ -128,6 +202,22 @@ namespace PismMaker_2._0
                 listBoxQuestions.Items.Add(question.Value);
             }
         }
+
+        private string QuestionVariableCreator(Dictionary<int, string> someDictionary)
+        {
+
+            StringBuilder questionFieldVariable = new StringBuilder();
+
+            foreach (var question in someDictionary)
+            {
+                questionFieldVariable.AppendLine($"{question.Key}) {question.Value.Trim()}");
+                questionFieldVariable.AppendLine();
+            }
+
+            return questionFieldVariable.ToString();
+        }
+
+
         #endregion
 
 
@@ -139,18 +229,10 @@ namespace PismMaker_2._0
             this.textBoxReplyDateDay.Text = replyDate.Day.ToString();
             this.textBoxReplyDateMonth.Text = replyDate.Month.ToString();
             this.textBoxReplyDateYear.Text = replyDate.Year.ToString();
-            pismmakerUser = new PismmakerUser();
+            pismmakerUser = new PismmakerUser("dm52cn", "Bandura, P. (Patryk)", "C7");
             client = new Client();
             templates = pismmakerUser.GetDocxFilesInFolder(pismmakerUser.DesktopTemplatesPath);
-            foreach (var template in templates)
-            {
-                ConsoleWindowWriteLine($"{template.Key}");
-
-                foreach (var item in template.Value)
-                {
-                    Console.WriteLine(item);
-                }
-            }
+            attachments = pismmakerUser.GetDocxFilesInFolder(pismmakerUser.DesktopAttachemntsPath);
             ConsoleWindowWriteLine($"Dzisiejszy dzieñ: {today.ToString("dd-MM-yyyy")}");
         }
 
@@ -235,7 +317,7 @@ namespace PismMaker_2._0
                     questionSelectWindow.Show();
 
                 }
-                else if (comboBoxChooseTeam.SelectedItem.ToString() == "CORP")
+                else if (comboBoxChooseTeam.SelectedItem.ToString() == "CORPO")
                 {
                     QuestionSelectWindow questionSelectWindow = new QuestionSelectWindow(this, excelQuestionsCORP, questions, ref client, 0, string.Empty);
                     questionSelectWindow.Show();
@@ -281,7 +363,7 @@ namespace PismMaker_2._0
                         QuestionSelectWindow questionSelectWindow = new QuestionSelectWindow(this, excelQuestionsENT, questions, ref client, keyInDict, valueInDict, editQuestionFlag);
                         questionSelectWindow.Show();
                     }
-                    else if (comboBoxChooseTeam.SelectedItem.ToString() == "CORP")
+                    else if (comboBoxChooseTeam.SelectedItem.ToString() == "CORPO")
                     {
                         QuestionSelectWindow questionSelectWindow = new QuestionSelectWindow(this, excelQuestionsCORP, questions, ref client, keyInDict, valueInDict, editQuestionFlag);
                         questionSelectWindow.Show();
@@ -349,7 +431,15 @@ namespace PismMaker_2._0
 
 
                 //wprwoadzenie danych do tabeli
-                textBoxClientAddres.Text = client.Address.ToString();
+                if (string.IsNullOrEmpty(client.Address2ndPage))
+                {
+                    textBoxClientAddres.Text = client.Address1stPage.ToString();
+                }
+                else
+                {
+                    textBoxClientAddres.Text = client.Address2ndPage.ToString();
+                }
+
                 textBoxClientName.Text = client.Name.ToString();
 
             }
@@ -374,7 +464,10 @@ namespace PismMaker_2._0
         private void comboBoxChooseTeam_SelectedIndexChanged(object sender, EventArgs e)
         {
             LoadDataIntoComboboxChooseTemplates(templates);
+
         }
+
+
 
         private void buttonCreateMessange_Click(object sender, EventArgs e)
         {
@@ -382,29 +475,35 @@ namespace PismMaker_2._0
             string selectedTeam = comboBoxChooseTeam.Text;
             string selectedTemplate = comboBoxChooseTemplate.Text;
 
+
             if (templates.ContainsKey(selectedTeam))
             {
-
                 Dictionary<string, string> teamDictionary = templates[selectedTeam];
 
                 if (teamDictionary.ContainsKey(selectedTemplate))
                 {
-                    string templateValue = teamDictionary[selectedTemplate];
-                    MessageBox.Show(templateValue);
-                    dynamic wordApp = Activator.CreateInstance(Type.GetTypeFromProgID("Word.Application"));
-                    dynamic wordDoc = wordApp.Documents.Open(templateValue);
-                    wordApp.Visible = true;
+
+                    ConsoleWindowWriteLine($"Tworzê pismo {selectedTemplate}");
+                    client.ConnectedString = QuestionVariableCreator(questions);
+                    ReplaceTextAndCreateMessange(pismmakerUser, client, teamDictionary, selectedTemplate);
 
                 }
                 else
                 {
-                    MessageBox.Show($"Nie istnieje klucz {selectedTemplate} dla {selectedTeam}.");
+                    MessageBox.Show($"Pusty klucz.");
+                    ConsoleWindowWriteLine("Pusty klucz.");
                 }
             }
             else
             {
-                MessageBox.Show($"Nie istnieje klucz {selectedTeam} w s³owniku g³ównym.");
+                MessageBox.Show($"Nie wybrano zespo³u.");
+                ConsoleWindowWriteLine("Nie wybrano zespo³u.");
             }
+
+        }
+
+        private void comboBoxChooseTemplate_SelectedIndexChanged(object sender, EventArgs e)
+        {
 
         }
     }

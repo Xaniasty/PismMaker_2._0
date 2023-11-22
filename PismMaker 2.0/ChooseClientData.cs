@@ -16,7 +16,7 @@ namespace PismMaker_2._0
         Dictionary<string, string> newKlientProperty;
         public event EventHandler<string> DataSelected;
 
-        public ChooseClientData(MainWindow form,Dictionary<string, string> klientProperty) : base()
+        public ChooseClientData(MainWindow form, Dictionary<string, string> klientProperty) : base()
         {
             InitializeComponent();
             loadDataIntoComboBox(klientProperty);

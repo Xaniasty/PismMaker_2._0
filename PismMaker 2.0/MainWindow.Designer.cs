@@ -188,6 +188,7 @@
             comboBoxChooseTemplate.Name = "comboBoxChooseTemplate";
             comboBoxChooseTemplate.Size = new Size(333, 29);
             comboBoxChooseTemplate.TabIndex = 9;
+            comboBoxChooseTemplate.SelectedIndexChanged += comboBoxChooseTemplate_SelectedIndexChanged;
             // 
             // checkBoxMEMO
             // 

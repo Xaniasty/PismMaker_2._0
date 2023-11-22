@@ -19,14 +19,16 @@ namespace PismMaker_2._0
 
         private MainWindow mainForm;
         private DateTime replyDate;
+        private Client client;
         
 
 
-        public SetReplyDate(MainWindow mainForm, ref Client client, DateTime date)
+        public SetReplyDate(MainWindow mainForm, ref Client ClientMain, DateTime date)
         {
             InitializeComponent();
             this.mainForm = mainForm;
             replyDate = date;
+            client = ClientMain;
 
 
         }
@@ -66,7 +68,7 @@ namespace PismMaker_2._0
             {
                 mainForm.SetReplyDateValue(newReplyDate);
                 mainForm.ConsoleWindowWriteLine($"Wprowadziłem nową datę {newReplyDate.ToString("dd-MM-yyyy")}");
-                //client replydate tez zaktualizuj wlasicowsc
+                client.ReplyDate = newReplyDate.ToString("dd-MM-yyyy");
 
             }
 
