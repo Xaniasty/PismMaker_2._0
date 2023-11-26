@@ -4,9 +4,9 @@
     {
         #region Properties
 
-        static string excels_path = @"C:\Users\Patryk\Desktop\Pliki Excel i Word\Foldery excel";
+        static string excels_path = @"C:\Users\Patryk\Desktop\Pliki Excel i Word";
         static string templates_path = $@"\Pliki Excel i Word\Word\Templatki"; //corpo path to folders
-        static string attachents_path = $@"\Pliki Excel i Word\Word\Załączniki"; //ent path to folders
+        static string attachents_path = $@"\Pliki Excel i Word\Word\Załączniki"; 
         static string savePath = $@"Pliki Excel i Word\Output";
 
         public string CK { get; set; }
@@ -17,6 +17,7 @@
         public string FolderSavePath { get; private set; }
         public string DesktopTemplatesPath { get; private set; }
         public string DesktopAttachemntsPath { get; private set; }
+        public string DesktopQuestionsPath { get; private set; }
 
         public PismmakerUser(string ck = null, string name = null, string team = null)
         {
@@ -28,7 +29,7 @@
             DesktopAttachemntsPath = $"{DesktopPath}{attachents_path}";
             FolderSavePath = $@"{DesktopPath}\{savePath}\{Team}\{CK}\";
             ExcelPath = $@"{excels_path}\{CK}\dm52cn.xlsx";
-            
+            DesktopQuestionsPath = $@"{excels_path}\Excel\Pytania_ENT.xlsx";
 
         }
 

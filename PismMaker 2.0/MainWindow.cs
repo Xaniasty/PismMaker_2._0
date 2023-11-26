@@ -19,6 +19,12 @@ using System.Drawing.Text;
 using System.Security.Cryptography.X509Certificates;
 using System.Diagnostics;
 using System.Net.Mail;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Wordprocessing;
+using static System.Net.Mime.MediaTypeNames;
+using Color = System.Drawing.Color;
+using System.Text.RegularExpressions;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Tab;
 
 namespace PismMaker_2._0
 {
@@ -80,7 +86,7 @@ namespace PismMaker_2._0
         }
 
 
-        private void ReplaceTextAndCreateMessange(PismmakerUser user, Client client, Dictionary<string, string> templates, string choosedTemplate)
+        private void ReplaceTextAndCreateMessage(PismmakerUser user, Client client, Dictionary<string, string> templates, string choosedTemplate)
         {
             var wordApp = new Word.Application();
             wordApp.Visible = false;
@@ -89,8 +95,6 @@ namespace PismMaker_2._0
             string filePath = templates[choosedTemplate];
 
             klientInfoDict = ObjectToDictionary(client);
-
-            string replacementText = client.ConnectedString.ToString();
 
             try
             {
@@ -102,17 +106,28 @@ namespace PismMaker_2._0
 
                     foreach (Word.Range storyRange in doc.StoryRanges)
                     {
-                        var contentRange = doc.Content;
+                        var contentRange = storyRange.Duplicate;
                         contentRange.Find.ClearFormatting();
                         contentRange.Find.Text = $"<<{property.Key}>>";
 
-                        if (contentRange.Find.Execute())
+                        while (contentRange.Find.Execute())
                         {
                             textFound = true;
-                            contentRange.Find.Replacement.Text = property.Value.ToString();
-                            MessageBox.Show(property.Value.ToString());
-                            contentRange.Find.Wrap = Word.WdFindWrap.wdFindContinue;
-                            contentRange.Find.Execute(Replace: Word.WdReplace.wdReplaceAll);
+
+                            // Utwórz StringBuilder do ³¹czenia tekstu
+                            StringBuilder replacementText = new StringBuilder(property.Value.ToString());
+
+                            // Ustaw maksymaln¹ d³ugoœæ fragmentu tekstu
+                            const int maxChunkSize = 32000;
+
+                            // Podziel tekst na mniejsze fragmenty
+                            for (int i = 0; i < replacementText.Length; i += maxChunkSize)
+                            {
+                                int chunkSize = Math.Min(maxChunkSize, replacementText.Length - i);
+                                string chunk = replacementText.ToString(i, chunkSize);
+
+                                contentRange.Text = chunk;
+                            }
                         }
                     }
 
@@ -122,8 +137,10 @@ namespace PismMaker_2._0
                     }
                 }
 
+                // Zapis do pliku
                 string newFolderPath = user.FolderSavePath;
                 string newFilePathWord = Path.Combine(newFolderPath, "NowyDokument.docx");
+
                 doc.SaveAs2(newFilePathWord, Word.WdSaveFormat.wdFormatDocumentDefault);
                 doc.Close();
             }
@@ -245,7 +262,8 @@ namespace PismMaker_2._0
                 try
                 {
                     ConsoleWindowWriteLine("Tworzê listê pytañ ENT");
-                    excelQuestionsENT = ExcelReader.CreateDictFromExcel(filePathENT);
+
+                    excelQuestionsENT = ExcelReader.CreateDictFromExcel($@"{pismmakerUser.DesktopQuestionsPath}");
                     ConsoleWindowWriteLine("Zakoñczy³em tworzenie listy dla ENT");
                 }
                 catch (Exception ex)
@@ -485,7 +503,7 @@ namespace PismMaker_2._0
 
                     ConsoleWindowWriteLine($"Tworzê pismo {selectedTemplate}");
                     client.ConnectedString = QuestionVariableCreator(questions);
-                    ReplaceTextAndCreateMessange(pismmakerUser, client, teamDictionary, selectedTemplate);
+                    ReplaceTextAndCreateMessage(pismmakerUser, client, teamDictionary, selectedTemplate);
 
                 }
                 else
