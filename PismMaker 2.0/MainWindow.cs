@@ -40,6 +40,7 @@ namespace PismMaker_2._0
         private List<string> teamsNames = new List<string>() { "ENT", "CORPO" };
         private Dictionary<string, Dictionary<string, string>> templates;
         private Dictionary<string, Dictionary<string, string>> attachments;
+        private List<string> attachmentsPathLinks = new List<string>();
         private List<string> templatesKeys;
         private Dictionary<int, string> questions = new Dictionary<int, string>();
         private int consoleLineNumber = 0;
@@ -124,7 +125,8 @@ namespace PismMaker_2._0
                             for (int i = 0; i < replacementText.Length; i += maxChunkSize)
                             {
                                 int chunkSize = Math.Min(maxChunkSize, replacementText.Length - i);
-                                string chunk = replacementText.ToString(i, chunkSize);
+                                string chunk = replacementText.ToString(i,
+                                    chunkSize);
 
                                 contentRange.Text = chunk;
                             }
@@ -163,11 +165,9 @@ namespace PismMaker_2._0
             comboBoxChooseTeam.Items.AddRange(teamsNames.ToArray());
         }
 
-        private void LoadDataIntoComboboxChooseTemplates(Dictionary<string, Dictionary<string, string>> someDictionary)
+        private void LoadDataIntoCombobox(string selectedTeam, System.Windows.Forms.ComboBox comboBox, Dictionary<string, Dictionary<string, string>> someDictionary)
         {
-            comboBoxChooseTemplate.Items.Clear();
-            string selectedTeam = comboBoxChooseTeam.Text;
-
+            comboBox.Items.Clear();
 
             switch (selectedTeam)
             {
@@ -175,8 +175,8 @@ namespace PismMaker_2._0
                     if (someDictionary.ContainsKey("ENT"))
                     {
                         templatesKeys = new List<string>(someDictionary["ENT"].Keys);
-                        comboBoxChooseTemplate.Items.AddRange(templatesKeys.ToArray());
-                        comboBoxChooseTemplate.Refresh();
+                        comboBox.Items.AddRange(templatesKeys.ToArray());
+                        comboBox.Refresh();
                     }
                     break;
 
@@ -184,8 +184,8 @@ namespace PismMaker_2._0
                     if (someDictionary.ContainsKey("CORPO"))
                     {
                         templatesKeys = new List<string>(someDictionary["CORPO"].Keys);
-                        comboBoxChooseTemplate.Items.AddRange(templatesKeys.ToArray());
-                        comboBoxChooseTemplate.Refresh();
+                        comboBox.Items.AddRange(templatesKeys.ToArray());
+                        comboBox.Refresh();
                     }
                     break;
 
@@ -193,8 +193,6 @@ namespace PismMaker_2._0
                     MessageBox.Show("BRAK WYBRANEGO TEAMU");
                     break;
             }
-
-
         }
 
 
@@ -202,6 +200,12 @@ namespace PismMaker_2._0
         {
             questions.Add(key, value);
             RefreshChoosedQuestionsList();
+        }
+
+        public void AddAttachment(string value)
+        {
+            attachmentsPathLinks.Add(value);
+            RefreshAttachmentList();
         }
 
         public void EditQuestion(int key, string value)
@@ -217,6 +221,16 @@ namespace PismMaker_2._0
             foreach (var question in questions)
             {
                 listBoxQuestions.Items.Add(question.Value);
+            }
+        }
+
+        private void RefreshAttachmentList()
+        {
+            listBoxAttachments.Items.Clear();
+
+            foreach (var attachment in attachmentsPathLinks)
+            {
+                listBoxAttachments.Items.Add(attachment);
             }
         }
 
@@ -246,7 +260,7 @@ namespace PismMaker_2._0
             this.textBoxReplyDateDay.Text = replyDate.Day.ToString();
             this.textBoxReplyDateMonth.Text = replyDate.Month.ToString();
             this.textBoxReplyDateYear.Text = replyDate.Year.ToString();
-            pismmakerUser = new PismmakerUser("dm52cn", "Bandura, P. (Patryk)", "C7");
+            pismmakerUser = new PismmakerUser("dm52cn", "Bandura, P. (Patryk)", "C7"); //to zamienic na konkretnego usera
             client = new Client();
             templates = pismmakerUser.GetDocxFilesInFolder(pismmakerUser.DesktopTemplatesPath);
             attachments = pismmakerUser.GetDocxFilesInFolder(pismmakerUser.DesktopAttachemntsPath);
@@ -434,6 +448,26 @@ namespace PismMaker_2._0
             ConsoleWindowWriteLine("Usuniêto wszystkie pytania");
         }
 
+        private void buttonDeleteChoosedAttachemnt_Click(object sender, EventArgs e)
+        {
+            if (listBoxAttachments.SelectedIndex != -1)
+            {
+                int selectedIndex = listBoxAttachments.SelectedIndex;
+                listBoxAttachments.Items.RemoveAt(selectedIndex);
+                attachmentsPathLinks.RemoveAt(selectedIndex);
+
+
+            }
+            ConsoleWindowWriteLine("Usuniêto wybrany za³¹cznik");
+        }
+
+        private void buttonDeleteAllAttachments_Click(object sender, EventArgs e)
+        {
+            attachmentsPathLinks.Clear();
+            RefreshAttachmentList();
+            ConsoleWindowWriteLine("Usuniêto wszystkie za³¹czniki");
+        }
+
         private void buttonClientDataMaker_Click(object sender, EventArgs e)
         {
             if (!(string.IsNullOrEmpty(textboxClientNumber.Text)) && textboxClientNumber.Text.Length == 10)
@@ -481,8 +515,8 @@ namespace PismMaker_2._0
 
         private void comboBoxChooseTeam_SelectedIndexChanged(object sender, EventArgs e)
         {
-            LoadDataIntoComboboxChooseTemplates(templates);
-
+            LoadDataIntoCombobox(this.comboBoxChooseTeam.Text, this.comboBoxChooseTemplate, templates);
+            LoadDataIntoCombobox(this.comboBoxChooseTeam.Text, this.comboBoxAttachments, attachments);
         }
 
 
@@ -493,36 +527,55 @@ namespace PismMaker_2._0
             string selectedTeam = comboBoxChooseTeam.Text;
             string selectedTemplate = comboBoxChooseTemplate.Text;
 
-
-            if (templates.ContainsKey(selectedTeam))
+            if (listBoxQuestions.Items.Count > 0)
             {
-                Dictionary<string, string> teamDictionary = templates[selectedTeam];
-
-                if (teamDictionary.ContainsKey(selectedTemplate))
+                if (templates.ContainsKey(selectedTeam))
                 {
+                    Dictionary<string, string> teamDictionary = templates[selectedTeam];
 
-                    ConsoleWindowWriteLine($"Tworzê pismo {selectedTemplate}");
-                    client.ConnectedString = QuestionVariableCreator(questions);
-                    ReplaceTextAndCreateMessage(pismmakerUser, client, teamDictionary, selectedTemplate);
+                    if (teamDictionary.ContainsKey(selectedTemplate))
+                    {
 
+                        ConsoleWindowWriteLine($"Tworzê pismo {selectedTemplate}");
+                        client.ConnectedString = QuestionVariableCreator(questions);
+                        ReplaceTextAndCreateMessage(pismmakerUser, client, teamDictionary, selectedTemplate);
+
+                    }
+                    else
+                    {
+                        MessageBox.Show($"Pusty klucz.");
+                        ConsoleWindowWriteLine("Pusty klucz.");
+                    }
                 }
                 else
                 {
-                    MessageBox.Show($"Pusty klucz.");
-                    ConsoleWindowWriteLine("Pusty klucz.");
+                    MessageBox.Show($"Nie wybrano zespo³u.");
+                    ConsoleWindowWriteLine("Nie wybrano zespo³u.");
                 }
             }
             else
             {
-                MessageBox.Show($"Nie wybrano zespo³u.");
-                ConsoleWindowWriteLine("Nie wybrano zespo³u.");
+                MessageBox.Show("Nie mo¿na stworzyæ pisma bez pytañ.");
+                ConsoleWindowWriteLine("B³¹d - nie wybrano pytañ");
             }
-
         }
 
         private void comboBoxChooseTemplate_SelectedIndexChanged(object sender, EventArgs e)
         {
 
         }
+
+        private void buttonChooseAttachment_Click(object sender, EventArgs e)
+        {
+            AddAttachment(comboBoxAttachments.Text);
+        }
+
+
+        private void listBoxQuestions_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+
     }
 }

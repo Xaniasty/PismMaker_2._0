@@ -72,6 +72,7 @@
             buttonPrelookMessange = new Button();
             textBoxConsole = new TextBox();
             buttonChoosedQuestionEdit = new Button();
+            comboBoxAttachments = new ComboBox();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             tableLayoutPanel1.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
@@ -251,6 +252,7 @@
             listBoxQuestions.Name = "listBoxQuestions";
             listBoxQuestions.Size = new Size(559, 259);
             listBoxQuestions.TabIndex = 14;
+            listBoxQuestions.SelectedIndexChanged += listBoxQuestions_SelectedIndexChanged;
             // 
             // pictureBox1
             // 
@@ -264,9 +266,9 @@
             // 
             listBoxAttachments.FormattingEnabled = true;
             listBoxAttachments.ItemHeight = 15;
-            listBoxAttachments.Location = new Point(517, 615);
+            listBoxAttachments.Location = new Point(517, 645);
             listBoxAttachments.Name = "listBoxAttachments";
-            listBoxAttachments.Size = new Size(559, 184);
+            listBoxAttachments.Size = new Size(559, 154);
             listBoxAttachments.TabIndex = 16;
             // 
             // buttonClientDataMaker
@@ -504,8 +506,9 @@
             buttonChooseAttachment.Name = "buttonChooseAttachment";
             buttonChooseAttachment.Size = new Size(143, 41);
             buttonChooseAttachment.TabIndex = 24;
-            buttonChooseAttachment.Text = "Wybierz Załącznik";
+            buttonChooseAttachment.Text = "Dodaj Załącznik";
             buttonChooseAttachment.UseVisualStyleBackColor = true;
+            buttonChooseAttachment.Click += buttonChooseAttachment_Click;
             // 
             // buttonDeleteChoosedAttachemnt
             // 
@@ -516,6 +519,7 @@
             buttonDeleteChoosedAttachemnt.TabIndex = 25;
             buttonDeleteChoosedAttachemnt.Text = "Usuń załącznik";
             buttonDeleteChoosedAttachemnt.UseVisualStyleBackColor = true;
+            buttonDeleteChoosedAttachemnt.Click += buttonDeleteChoosedAttachemnt_Click;
             // 
             // buttonDeleteAllAttachments
             // 
@@ -526,6 +530,7 @@
             buttonDeleteAllAttachments.TabIndex = 26;
             buttonDeleteAllAttachments.Text = "Usuń wszystkie załączniki";
             buttonDeleteAllAttachments.UseVisualStyleBackColor = true;
+            buttonDeleteAllAttachments.Click += buttonDeleteAllAttachments_Click;
             // 
             // buttonCreateMessange
             // 
@@ -572,12 +577,23 @@
             buttonChoosedQuestionEdit.UseVisualStyleBackColor = true;
             buttonChoosedQuestionEdit.Click += buttonChoosedQuestionEdit_Click;
             // 
+            // comboBoxAttachments
+            // 
+            comboBoxAttachments.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBoxAttachments.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            comboBoxAttachments.FormattingEnabled = true;
+            comboBoxAttachments.Location = new Point(517, 610);
+            comboBoxAttachments.Name = "comboBoxAttachments";
+            comboBoxAttachments.Size = new Size(559, 29);
+            comboBoxAttachments.TabIndex = 31;
+            // 
             // MainWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.ScrollBar;
             ClientSize = new Size(1099, 826);
+            Controls.Add(comboBoxAttachments);
             Controls.Add(buttonChoosedQuestionEdit);
             Controls.Add(textBoxConsole);
             Controls.Add(buttonPrelookMessange);
@@ -670,5 +686,6 @@
         private TextBox textBoxReplyDateYear;
         private TextBox textBoxReplyDateMonth;
         private TextBox textBoxReplyDateDay;
+        private ComboBox comboBoxAttachments;
     }
 }
