@@ -40,7 +40,7 @@ namespace PismMaker_2._0
         private List<string> teamsNames = new List<string>() { "ENT", "CORPO" };
         private Dictionary<string, Dictionary<string, string>> templates;
         private Dictionary<string, Dictionary<string, string>> attachments;
-        private List<string> attachmentsPathLinks = new List<string>();
+        private List<string> attachmentsNames = new List<string>();
         private List<string> templatesKeys;
         private Dictionary<int, string> questions = new Dictionary<int, string>();
         private int consoleLineNumber = 0;
@@ -76,7 +76,48 @@ namespace PismMaker_2._0
             return dictionary;
         }
 
+        private void CopyAttachemntsToAnotherFolder(PismmakerUser user, List<string> attachemntList)
+        {
+            try
+            {
+                if (attachemntList.Count > 0)
+                {
 
+                    string fileTargetPath = $"{user.FolderSavePath}";
+                    foreach (string attachmentName in attachemntList)
+                    {
+                        if (this.comboBoxChooseTeam.Text != null)
+                        {
+                            try
+                            {
+                                string fileSourcePath = $@"{user.DesktopAttachemntsPath}\{this.comboBoxChooseTeam.Text}\{attachmentName}";
+                                string newfileTargetPath = $@"{fileTargetPath}{attachmentName}";
+                                File.Copy(fileSourcePath, newfileTargetPath, true);
+                                ConsoleWindowWriteLine($"Dodano za³¹cznik {attachmentName} do folderu");
+                            }
+                            catch (Exception ex)
+                            {
+                                ConsoleWindowWriteLine($"Wyst¹pi³ b³¹d przy przenoszeniu za³¹czników: {ex.ToString()}");
+                            }
+                        }
+                        else
+                        {
+                            ConsoleWindowWriteLine($"Nie wybrano zespo³u");
+                            MessageBox.Show("Nie wybrano zespo³u");
+                        }
+                    }
+                }
+                else
+                {
+                    ConsoleWindowWriteLine($"Brak wybranych za³¹czników do dodania");
+                }
+            }
+            catch (Exception e)
+            {
+                ConsoleWindowWriteLine($"B³¹d przy kopiowaniu za³¹cznika nazwa: {e.ToString()}");
+            }
+        }
+        
 
         public void SetReplyDateValue(DateTime newReplyDate)
         {
@@ -204,8 +245,26 @@ namespace PismMaker_2._0
 
         public void AddAttachment(string value)
         {
-            attachmentsPathLinks.Add(value);
-            RefreshAttachmentList();
+            try
+            {
+                if (value != null)
+                {
+                    attachmentsNames.Add(value);
+                    ConsoleWindowWriteLine($"Dodaje za³¹cznik o nazwie {value} do listy");
+                }
+                else
+                {
+                    ConsoleWindowWriteLine("Nie wybrano za³¹cznika z lity");
+                }
+            }
+            catch (Exception e)
+            {
+                ConsoleWindowWriteLine($"Wystapi³ b³¹d przy dodawaniu {value} do listy nazwa b³êdu: {e.ToString()}");
+            }
+            finally
+            {
+                RefreshAttachmentList();
+            }
         }
 
         public void EditQuestion(int key, string value)
@@ -228,7 +287,7 @@ namespace PismMaker_2._0
         {
             listBoxAttachments.Items.Clear();
 
-            foreach (var attachment in attachmentsPathLinks)
+            foreach (var attachment in attachmentsNames)
             {
                 listBoxAttachments.Items.Add(attachment);
             }
@@ -454,7 +513,7 @@ namespace PismMaker_2._0
             {
                 int selectedIndex = listBoxAttachments.SelectedIndex;
                 listBoxAttachments.Items.RemoveAt(selectedIndex);
-                attachmentsPathLinks.RemoveAt(selectedIndex);
+                attachmentsNames.RemoveAt(selectedIndex);
 
 
             }
@@ -463,7 +522,7 @@ namespace PismMaker_2._0
 
         private void buttonDeleteAllAttachments_Click(object sender, EventArgs e)
         {
-            attachmentsPathLinks.Clear();
+            attachmentsNames.Clear();
             RefreshAttachmentList();
             ConsoleWindowWriteLine("Usuniêto wszystkie za³¹czniki");
         }
@@ -526,7 +585,6 @@ namespace PismMaker_2._0
             //temaplatePath
             string selectedTeam = comboBoxChooseTeam.Text;
             string selectedTemplate = comboBoxChooseTemplate.Text;
-
             if (listBoxQuestions.Items.Count > 0)
             {
                 if (templates.ContainsKey(selectedTeam))
@@ -535,16 +593,46 @@ namespace PismMaker_2._0
 
                     if (teamDictionary.ContainsKey(selectedTemplate))
                     {
+                        if (attachmentsNames.Count <= 0)
+                        {
+                            DialogResult result = MessageBox.Show("Nie doda³eœ za³¹czników" +
+                                " czy napewno chcesz kontynuowaæ?", "Wybierz opcje", MessageBoxButtons.OKCancel);
 
-                        ConsoleWindowWriteLine($"Tworzê pismo {selectedTemplate}");
-                        client.ConnectedString = QuestionVariableCreator(questions);
-                        ReplaceTextAndCreateMessage(pismmakerUser, client, teamDictionary, selectedTemplate);
-
+                            if (result == DialogResult.OK)
+                            {
+                                ConsoleWindowWriteLine($"Tworzê pismo {selectedTemplate}");
+                                client.ConnectedString = QuestionVariableCreator(questions);
+                                ReplaceTextAndCreateMessage(pismmakerUser, client, teamDictionary, selectedTemplate);
+                                CopyAttachemntsToAnotherFolder(pismmakerUser, attachmentsNames);
+                            } 
+                            else if (result == DialogResult.Cancel)
+                            {
+                                ConsoleWindowWriteLine("Przerwano akcje tworzenia pisma.");
+                                MessageBox.Show("Przerwano akcje.");
+                            }
+                        }
+                        else
+                        {
+                            try
+                            {
+                                ConsoleWindowWriteLine($"Tworzê pismo {selectedTemplate}");
+                                client.ConnectedString = QuestionVariableCreator(questions);
+                                ReplaceTextAndCreateMessage(pismmakerUser, client, teamDictionary, selectedTemplate);
+                                CopyAttachemntsToAnotherFolder(pismmakerUser, attachmentsNames);
+                                ConsoleWindowWriteLine("Zakoñczono pozytywnie tworzenie pisma");
+                                MessageBox.Show("Koniec - pismo jest w folderze klienta");
+                            } 
+                            catch(Exception ex)
+                            {
+                                ConsoleWindowWriteLine($"B³¹d przy tworzeniu pisma lub kopiowaniu za³¹cznika: {ex.ToString}");
+                                MessageBox.Show("Przerwano akcje.");
+                            }
+                        }
                     }
                     else
                     {
-                        MessageBox.Show($"Pusty klucz.");
-                        ConsoleWindowWriteLine("Pusty klucz.");
+                        MessageBox.Show($"Nie wybrano szablonu.");
+                        ConsoleWindowWriteLine("Nie wybrano szablonu - klucz pusty.");
                     }
                 }
                 else
