@@ -204,15 +204,23 @@ namespace PismMaker_2._0
         {
             try
             {
+                bool semicolonInString = textBoxSelectedQuestion.Text.Contains(';');
+                bool nullOrEmpty = string.IsNullOrEmpty(textBoxSelectedQuestion.Text);
+
                 if (questionToEdit == true) //jeżeli ktoś kliknie edytuj pytanie
                 {
-                    if (!string.IsNullOrEmpty(textBoxSelectedQuestion.Text))
+                    if (!nullOrEmpty && semicolonInString != true)
                     {
                         mainForm.EditQuestion(selectedQuestionKey, textBoxSelectedQuestion.Text);
                         this.mainForm.ConsoleWindowWriteLine($"Edytuje {selectedQuestionKey} pytanie na liście");
                         this.Close();
                     }
-                    else
+                    else if(semicolonInString == true)
+                    {
+                        this.mainForm.ConsoleWindowWriteLine($"W pytaniu znajduje się niedozwolony znak średnika ';' usuń go aby kontynuować.");
+                        MessageBox.Show("W pytaniu znajduje się niedozwolony znak średnika ';' usuń go aby kontynuować..");
+                    }
+                    else if (nullOrEmpty)
                     {
                         this.mainForm.ConsoleWindowWriteLine($"Nie wprowadzono lub wybrano pytania. Nie dodano pustego ciągu znaków.");
                         MessageBox.Show("Wybierz lub wprowadź treść pytania.");
@@ -220,14 +228,20 @@ namespace PismMaker_2._0
                 }
                 else if (questionToEdit == false) //jeżeli ktoś kliknie dodaj pytanie
                 {
-                    if (!string.IsNullOrEmpty(textBoxSelectedQuestion.Text))
+                    if (!nullOrEmpty && semicolonInString != true)
                     {
                         int newKey = questions.Count + 1;
                         mainForm.AddQuestion(newKey, textBoxSelectedQuestion.Text);
+                        
                         this.mainForm.ConsoleWindowWriteLine($"Dodaje {newKey} pytanie do listy");
                         this.Close();
                     }
-                    else
+                    else if (semicolonInString == true)
+                    {
+                        this.mainForm.ConsoleWindowWriteLine($"W pytaniu znajduje się niedozwolony znak średnika ';' usuń go aby kontynuować.");
+                        MessageBox.Show("W pytaniu znajduje się niedozwolony znak średnika ';' usuń go aby kontynuować.");
+                    }
+                    else if (nullOrEmpty)
                     {
                         this.mainForm.ConsoleWindowWriteLine($"Nie wprowadzono lub wybrano pytania. Nie dodano pustego ciągu znaków.");
                         MessageBox.Show("Wybierz lub wprowadź treść pytania.");

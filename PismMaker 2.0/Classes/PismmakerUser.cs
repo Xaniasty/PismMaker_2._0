@@ -3,11 +3,11 @@
     internal class PismmakerUser
     {
         #region Properties
-
         static string excels_path = @"C:\Users\Patryk\Desktop\Pliki Excel i Word";
         static string templates_path = $@"\Pliki Excel i Word\Word\Templatki"; //corpo path to folders
         static string attachents_path = $@"\Pliki Excel i Word\Word\Załączniki"; 
         static string savePath = $@"Pliki Excel i Word\Output";
+        static string excelSaveMessangesPath = $@"Foldery excel";
 
         public string CK { get; set; }
         public string Name { get; set; }
@@ -18,6 +18,7 @@
         public string DesktopTemplatesPath { get; private set; }
         public string DesktopAttachemntsPath { get; private set; }
         public string DesktopQuestionsPath { get; private set; }
+        public string excelSaveMessnagesPathCK { get; set; }
 
         public PismmakerUser(string ck = null, string name = null, string team = null)
         {
@@ -30,6 +31,7 @@
             FolderSavePath = $@"{DesktopPath}\{savePath}\{Team}\{CK}\";
             ExcelPath = $@"{excels_path}\{CK}\dm52cn.xlsx";
             DesktopQuestionsPath = $@"{excels_path}\Excel\Pytania_ENT.xlsx";
+            excelSaveMessnagesPathCK = $@"{excels_path}\{excelSaveMessangesPath}\{CK}_listaPytań.xlsx";
 
         }
 

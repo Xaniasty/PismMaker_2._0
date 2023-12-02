@@ -33,21 +33,35 @@ namespace PismMaker_2._0
 
         #region Variables & classes
 
-        public static string filePathENT = @"C:\Users\Patryk\Desktop\PismMaker 2.0\Excel_pytania\Pytania_ENT.xlsx"; //bêdzie ustalane na postawie klasy User
-        public static string filePathCorp = @"C:\Users\Patryk\Desktop\PismMaker 2.0\Excel_pytania\Pytania_CORP.xlsx"; //bêdzie ustalne na podstawie klasy User
+        //public static string filePathENT = @"C:\Users\Patryk\Desktop\PismMaker 2.0\Excel_pytania\Pytania_ENT.xlsx"; //bêdzie ustalane na postawie klasy User
+        //public static string filePathCorp = @"C:\Users\Patryk\Desktop\PismMaker 2.0\Excel_pytania\Pytania_CORP.xlsx"; //bêdzie ustalne na podstawie klasy User
         private Dictionary<string, string> excelQuestionsENT;
         private Dictionary<string, string> excelQuestionsCORP;
-        private List<string> teamsNames = new List<string>() { "ENT", "CORPO" };
         private Dictionary<string, Dictionary<string, string>> templates;
         private Dictionary<string, Dictionary<string, string>> attachments;
+        private Dictionary<int, string> questions = new Dictionary<int, string>();
+        private Dictionary<int, string> questionsStatistic = new Dictionary<int, string>();
+        private List<string> teamsNames = new List<string>() { "ENT", "CORPO" };
         private List<string> attachmentsNames = new List<string>();
         private List<string> templatesKeys;
-        private Dictionary<int, string> questions = new Dictionary<int, string>();
         private int consoleLineNumber = 0;
         private string questionsFieldVariable;
+        private string temaplatePath;
         private DateTime today = DateTime.Today;
         private DateTime replyDate;
-        private string temaplatePath;
+        private DateTime todayFullTime = DateTime.Now;
+
+
+        //varables for save data in user excel folders
+        private string saveUser;
+        private string saveClientNumber;
+        private string saveReplyDate;
+        private string saveQuestions;
+        private string saveStatisticQuestions;
+        private int saveNumberOfQuestions;
+        private string saveAttatchents;
+        private string templateName;
+        private string teamName;
 
 
 
@@ -58,6 +72,60 @@ namespace PismMaker_2._0
 
 
         #region Methods
+
+        private void CreateDataSaveToExcel()
+        {
+            saveUser = pismmakerUser.CK;
+            saveClientNumber = client.ClientNumber;
+            saveReplyDate = client.ReplyDate ;
+            saveQuestions = QuestionVariableSaveCreator(questions);
+            saveStatisticQuestions = teamName == "ENT" ? GetQuestionStatistic(excelQuestionsENT, questions) : GetQuestionStatistic(excelQuestionsCORP, questions); ;
+            saveNumberOfQuestions = questions.Count();
+            saveAttatchents = string.Join(";",attachmentsNames);
+
+            Dictionary <int, string> messangeData = new Dictionary<int, string>();
+
+            messangeData.Add(1, saveUser);
+            messangeData.Add(2, todayFullTime.ToString("yyyy.MM.dd HH:mm:ss"));
+            messangeData.Add(3, saveClientNumber);
+            messangeData.Add(4, saveReplyDate);
+            messangeData.Add(5, saveQuestions);
+            messangeData.Add(6, saveStatisticQuestions);
+            messangeData.Add(7, saveNumberOfQuestions.ToString());
+            messangeData.Add(8, saveAttatchents);
+            messangeData.Add(9, templateName);
+
+            try
+            {
+                ConsoleWindowWriteLine("Dodajê rekord do Twojej bazy pism");
+                using (var excelReader = new ExcelReader(pismmakerUser.excelSaveMessnagesPathCK, 1))
+                {
+                    excelReader.saveClientDateIntoExcelFile(messangeData);
+                    
+                    ConsoleWindowWriteLine("Doda³em rekord do Twojej bazy pism");
+                }
+            }
+            catch (Exception ex)
+            {
+                ConsoleWindowWriteLine($"B³¹d przy odczycie EXCEL ENT {ex}");
+            }
+        } 
+
+        static string GetQuestionStatistic(Dictionary<string, string> pytania, Dictionary<int, string> pytaniaID)
+        {
+            List<string> questionStatistic = new List<string>();
+
+            foreach (var kvp in pytaniaID)
+            {
+                if (pytania.ContainsValue(kvp.Value))
+                {
+                    string klucz = pytania.FirstOrDefault(x => x.Value == kvp.Value).Key;
+                    questionStatistic.Add(klucz);
+                }
+            }
+            return string.Join(";", questionStatistic);
+        }
+
 
 
         static Dictionary<string, string> ObjectToDictionary(object obj)
@@ -117,7 +185,7 @@ namespace PismMaker_2._0
                 ConsoleWindowWriteLine($"B³¹d przy kopiowaniu za³¹cznika nazwa: {e.ToString()}");
             }
         }
-        
+
 
         public void SetReplyDateValue(DateTime newReplyDate)
         {
@@ -243,6 +311,8 @@ namespace PismMaker_2._0
             RefreshChoosedQuestionsList();
         }
 
+
+
         public void AddAttachment(string value)
         {
             try
@@ -307,6 +377,19 @@ namespace PismMaker_2._0
             return questionFieldVariable.ToString();
         }
 
+        private string QuestionVariableSaveCreator(Dictionary<int, string> someDictionary)
+        {
+            StringBuilder questionFieldVariable = new StringBuilder();
+
+            foreach (var question in someDictionary)
+            {
+                questionFieldVariable.AppendLine($"{question.Value.Trim()};");
+            }
+            return questionFieldVariable.ToString();
+        }
+
+
+
 
         #endregion
 
@@ -323,21 +406,24 @@ namespace PismMaker_2._0
             client = new Client();
             templates = pismmakerUser.GetDocxFilesInFolder(pismmakerUser.DesktopTemplatesPath);
             attachments = pismmakerUser.GetDocxFilesInFolder(pismmakerUser.DesktopAttachemntsPath);
-            ConsoleWindowWriteLine($"Dzisiejszy dzieñ: {today.ToString("dd-MM-yyyy")}");
+            ConsoleWindowWriteLine($"Dzisiejszy dzieñ: {today.ToString("dd.MM.yyyy")}");
         }
 
         private void MainWindow_Load(object sender, EventArgs e)
         {
             LoadDataIntoComboBoxTeamChoose();
+
             #region odczyt excel pytania
             try
             {
                 try
                 {
                     ConsoleWindowWriteLine("Tworzê listê pytañ ENT");
-
-                    excelQuestionsENT = ExcelReader.CreateDictFromExcel($@"{pismmakerUser.DesktopQuestionsPath}");
-                    ConsoleWindowWriteLine("Zakoñczy³em tworzenie listy dla ENT");
+                    using (var excelReader = new ExcelReader(pismmakerUser.DesktopQuestionsPath, 1))
+                    {
+                        excelQuestionsENT = excelReader.CreateDictFromExcel();
+                        ConsoleWindowWriteLine("Zakoñczy³em tworzenie listy dla ENT");
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -347,8 +433,11 @@ namespace PismMaker_2._0
                 try
                 {
                     ConsoleWindowWriteLine("Tworzê listê pytañ CORPO");
-                    excelQuestionsCORP = ExcelReader.CreateDictFromExcel(filePathCorp);
-                    ConsoleWindowWriteLine("Zakoñczy³em tworzenie listy dla CORPO");
+                    using (var excelReader = new ExcelReader(pismmakerUser.DesktopQuestionsPath, 2))
+                    {
+                        excelQuestionsCORP = excelReader.CreateDictFromExcel();
+                        ConsoleWindowWriteLine("Zakoñczy³em tworzenie listy dla CORPO");
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -389,10 +478,7 @@ namespace PismMaker_2._0
 
         private void buttonPrelookMessange_Click(object sender, EventArgs e)
         {
-            for (int i = 0; i < 10; i++)
-            {
-                ConsoleWindowWriteLine("Wykonanie tekstu konsoli");
-            }
+            MessageBox.Show("W trakcie prac :)");
         }
 
         #endregion
@@ -576,6 +662,8 @@ namespace PismMaker_2._0
         {
             LoadDataIntoCombobox(this.comboBoxChooseTeam.Text, this.comboBoxChooseTemplate, templates);
             LoadDataIntoCombobox(this.comboBoxChooseTeam.Text, this.comboBoxAttachments, attachments);
+            teamName = comboBoxChooseTeam.Text;
+
         }
 
 
@@ -604,7 +692,11 @@ namespace PismMaker_2._0
                                 client.ConnectedString = QuestionVariableCreator(questions);
                                 ReplaceTextAndCreateMessage(pismmakerUser, client, teamDictionary, selectedTemplate);
                                 CopyAttachemntsToAnotherFolder(pismmakerUser, attachmentsNames);
-                            } 
+                                CreateDataSaveToExcel();
+
+                                ConsoleWindowWriteLine("Zakoñczono pozytywnie tworzenie pisma");
+                                MessageBox.Show("Koniec - pismo jest w folderze klienta");
+                            }
                             else if (result == DialogResult.Cancel)
                             {
                                 ConsoleWindowWriteLine("Przerwano akcje tworzenia pisma.");
@@ -619,10 +711,12 @@ namespace PismMaker_2._0
                                 client.ConnectedString = QuestionVariableCreator(questions);
                                 ReplaceTextAndCreateMessage(pismmakerUser, client, teamDictionary, selectedTemplate);
                                 CopyAttachemntsToAnotherFolder(pismmakerUser, attachmentsNames);
+                                CreateDataSaveToExcel();
+
                                 ConsoleWindowWriteLine("Zakoñczono pozytywnie tworzenie pisma");
                                 MessageBox.Show("Koniec - pismo jest w folderze klienta");
-                            } 
-                            catch(Exception ex)
+                            }
+                            catch (Exception ex)
                             {
                                 ConsoleWindowWriteLine($"B³¹d przy tworzeniu pisma lub kopiowaniu za³¹cznika: {ex.ToString}");
                                 MessageBox.Show("Przerwano akcje.");
@@ -650,7 +744,7 @@ namespace PismMaker_2._0
 
         private void comboBoxChooseTemplate_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+            templateName = comboBoxChooseTemplate.Text;
         }
 
         private void buttonChooseAttachment_Click(object sender, EventArgs e)
@@ -664,6 +758,9 @@ namespace PismMaker_2._0
 
         }
 
+        private void checkBoxMEMO_CheckedChanged(object sender, EventArgs e)
+        {
 
+        }
     }
 }

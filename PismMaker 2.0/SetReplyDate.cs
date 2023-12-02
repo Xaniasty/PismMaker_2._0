@@ -59,7 +59,7 @@ namespace PismMaker_2._0
 
         private void UpdateLabel(DateTime date)
         {
-            labelNewReplyDate.Text = date.ToString("dd-MM-yyyy");
+            labelNewReplyDate.Text = date.ToString("dd.MM.yyyy");
         }
 
         private void buttonSendNewDate_Click(object sender, EventArgs e)
@@ -67,8 +67,8 @@ namespace PismMaker_2._0
             if (DateTime.TryParse(labelNewReplyDate.Text, out DateTime newReplyDate))
             {
                 mainForm.SetReplyDateValue(newReplyDate);
-                mainForm.ConsoleWindowWriteLine($"Wprowadziłem nową datę {newReplyDate.ToString("dd-MM-yyyy")}");
-                client.ReplyDate = newReplyDate.ToString("dd-MM-yyyy");
+                mainForm.ConsoleWindowWriteLine($"Wprowadziłem nową datę {newReplyDate.ToString("dd.MM.yyyy")}");
+                client.ReplyDate = newReplyDate.ToString("dd.MM.yyyy");
 
             }
 

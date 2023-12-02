@@ -24,7 +24,9 @@ namespace PismMaker_2._0.Classes
         public string CddRisk { get; set; }
         public string CddDateEnd { get; set; }
         public string PkdUsed { get; set; }
-        public string ConnectedString {  get; set; }
+        public string ConnectedString { get; set; }
+
+
 
 
         public Client(string name = null, string clientNumber = null, string address1 = null, string address2 = null,

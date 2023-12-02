@@ -41,7 +41,6 @@
             checkBoxMEMO = new CheckBox();
             checkBoxIWA = new CheckBox();
             checkBoxMAIL = new CheckBox();
-            checkBox4 = new CheckBox();
             listBoxQuestions = new ListBox();
             pictureBox1 = new PictureBox();
             listBoxAttachments = new ListBox();
@@ -204,6 +203,7 @@
             checkBoxMEMO.Text = "Stwórz memo";
             checkBoxMEMO.TextAlign = ContentAlignment.MiddleCenter;
             checkBoxMEMO.UseVisualStyleBackColor = false;
+            checkBoxMEMO.CheckedChanged += checkBoxMEMO_CheckedChanged;
             // 
             // checkBoxIWA
             // 
@@ -230,19 +230,6 @@
             checkBoxMAIL.Text = "Wyślij e-mail";
             checkBoxMAIL.TextAlign = ContentAlignment.MiddleCenter;
             checkBoxMAIL.UseVisualStyleBackColor = false;
-            // 
-            // checkBox4
-            // 
-            checkBox4.BackColor = SystemColors.Menu;
-            checkBox4.FlatStyle = FlatStyle.Popup;
-            checkBox4.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
-            checkBox4.Location = new Point(34, 213);
-            checkBox4.Name = "checkBox4";
-            checkBox4.Size = new Size(211, 49);
-            checkBox4.TabIndex = 13;
-            checkBox4.Text = "checkBox4";
-            checkBox4.TextAlign = ContentAlignment.MiddleCenter;
-            checkBox4.UseVisualStyleBackColor = false;
             // 
             // listBoxQuestions
             // 
@@ -284,6 +271,7 @@
             // 
             // progressBarClientData
             // 
+            progressBarClientData.ForeColor = Color.Lime;
             progressBarClientData.Location = new Point(320, 192);
             progressBarClientData.Name = "progressBarClientData";
             progressBarClientData.Size = new Size(143, 23);
@@ -611,7 +599,6 @@
             Controls.Add(listBoxAttachments);
             Controls.Add(pictureBox1);
             Controls.Add(listBoxQuestions);
-            Controls.Add(checkBox4);
             Controls.Add(checkBoxMAIL);
             Controls.Add(checkBoxIWA);
             Controls.Add(checkBoxMEMO);
@@ -655,7 +642,6 @@
         private CheckBox checkBoxMEMO;
         private CheckBox checkBoxIWA;
         private CheckBox checkBoxMAIL;
-        private CheckBox checkBox4;
         private ListBox listBoxQuestions;
         private PictureBox pictureBox1;
         private ListBox listBoxAttachments;
